@@ -420,6 +420,57 @@ document.addEventListener('DOMContentLoaded', function() {
 });
 
 // =========== CMS UI ===========
+// Helper row functions MUST be defined at top-level
+function cmsFeeRow(fee, i) {
+    return `<tr>
+        <td><input class="form-control" name="fee_name" value="${fee.name||''}"></td>
+        <td><input class="form-control" name="fee_amount" value="${fee.amount||''}"></td>
+        <td><input class="form-control" name="fee_currency" value="${fee.currency||''}"></td>
+        <td><input class="form-control" name="fee_frequency" value="${fee.frequency||''}"></td>
+        <td><input class="form-control" name="fee_conditions" value="${fee.conditions||''}"></td>
+        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('fees',${i})"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+}
+function cmsLimitRow(lim, i) {
+    return `<tr>
+        <td><input class="form-control" name="limit_channel" value="${lim.channel||''}"></td>
+        <td><input class="form-control" name="limit_type" value="${lim.limitType||''}"></td>
+        <td><input class="form-control" name="limit_amount" value="${lim.amount||''}"></td>
+        <td><input class="form-control" name="limit_currency" value="${lim.currency||''}"></td>
+        <td><input class="form-control" name="limit_conditions" value="${lim.conditions||''}"></td>
+        <td><input class="form-control" name="limit_taxStatus" value="${lim.taxStatus||''}"></td>
+        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('limits',${i})"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+}
+function cmsTierRow(tier, i) {
+    return `<tr>
+        <td><input class="form-control" name="tier_tier" value="${tier.tier||''}"></td>
+        <td><input class="form-control" name="tier_operator" value="${tier.operator||''}"></td>
+        <td><input class="form-control" name="tier_value" value="${tier.value||''}"></td>
+        <td><input class="form-control" name="tier_currency" value="${tier.currency||''}"></td>
+        <td><input class="form-control" name="tier_rate" value="${tier.rate||''}"></td>
+        <td><input class="form-control" name="tier_payout" value="${tier.payout||''}"></td>
+        <td><input class="form-control" name="tier_conditions" value="${tier.conditions||''}"></td>
+        <td><input class="form-control" name="tier_depositCondition" value="${tier.depositCondition||''}"></td>
+        <td><input class="form-control" name="tier_withdrawCondition" value="${tier.withdrawCondition||''}"></td>
+        <td><input class="form-control" name="tier_earlyClosure" value="${tier.earlyClosure||''}"></td>
+        <td><input class="form-control" name="tier_minBalance" value="${tier.minBalance||''}"></td>
+        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('tiers',${i})"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+}
+function addCmsRow(table){
+    let tbl = document.getElementById('cms'+capitalize(table)+'Table').getElementsByTagName('tbody')[0];
+    let row = document.createElement('tr');
+    if(table==='fees') row.innerHTML=cmsFeeRow({},tbl.rows.length);
+    else if(table==='limits') row.innerHTML=cmsLimitRow({},tbl.rows.length);
+    else row.innerHTML=cmsTierRow({},tbl.rows.length);
+    tbl.appendChild(row);
+}
+function delCmsRow(table,idx){
+    let tbl = document.getElementById('cms'+capitalize(table)+'Table').getElementsByTagName('tbody')[0];
+    tbl.deleteRow(idx);
+}
+function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1);}
 const CMS_USER = "keovoin";
 const CMS_PASSWORD = "Wing@Admin123";
 document.getElementById('cmsLoginBtn').onclick = function() {
@@ -526,54 +577,8 @@ function showCmsProductModal(type, idx=null) {
             </tbody>
         </table>
         </div>
-        <script>
-        window.addCmsRow = function(table){
-            let tbl = document.getElementById('cms'+capitalize(table)+'Table').getElementsByTagName('tbody')[0];
-            let row = document.createElement('tr');
-            if(table==='fees') row.innerHTML=window.cmsFeeRow({},tbl.rows.length);
-            else if(table==='limits') row.innerHTML=window.cmsLimitRow({},tbl.rows.length);
-            else row.innerHTML=window.cmsTierRow({},tbl.rows.length);
-            tbl.appendChild(row);
-        }
-        window.delCmsRow = function(table,idx){
-            let tbl = document.getElementById('cms'+capitalize(table)+'Table').getElementsByTagName('tbody')[0];
-            tbl.deleteRow(idx);
-        }
-        function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1);}
-        </script>
     `;
     document.getElementById('cmsFormFields').innerHTML = html;
-    window.cmsFeeRow = (fee,i) => `<tr>
-        <td><input class="form-control" name="fee_name" value="${fee.name||''}"></td>
-        <td><input class="form-control" name="fee_amount" value="${fee.amount||''}"></td>
-        <td><input class="form-control" name="fee_currency" value="${fee.currency||''}"></td>
-        <td><input class="form-control" name="fee_frequency" value="${fee.frequency||''}"></td>
-        <td><input class="form-control" name="fee_conditions" value="${fee.conditions||''}"></td>
-        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('fees',${i})"><i class="fas fa-trash"></i></button></td>
-    </tr>`;
-    window.cmsLimitRow = (lim,i) => `<tr>
-        <td><input class="form-control" name="limit_channel" value="${lim.channel||''}"></td>
-        <td><input class="form-control" name="limit_type" value="${lim.limitType||''}"></td>
-        <td><input class="form-control" name="limit_amount" value="${lim.amount||''}"></td>
-        <td><input class="form-control" name="limit_currency" value="${lim.currency||''}"></td>
-        <td><input class="form-control" name="limit_conditions" value="${lim.conditions||''}"></td>
-        <td><input class="form-control" name="limit_taxStatus" value="${lim.taxStatus||''}"></td>
-        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('limits',${i})"><i class="fas fa-trash"></i></button></td>
-    </tr>`;
-    window.cmsTierRow = (tier,i) => `<tr>
-        <td><input class="form-control" name="tier_tier" value="${tier.tier||''}"></td>
-        <td><input class="form-control" name="tier_operator" value="${tier.operator||''}"></td>
-        <td><input class="form-control" name="tier_value" value="${tier.value||''}"></td>
-        <td><input class="form-control" name="tier_currency" value="${tier.currency||''}"></td>
-        <td><input class="form-control" name="tier_rate" value="${tier.rate||''}"></td>
-        <td><input class="form-control" name="tier_payout" value="${tier.payout||''}"></td>
-        <td><input class="form-control" name="tier_conditions" value="${tier.conditions||''}"></td>
-        <td><input class="form-control" name="tier_depositCondition" value="${tier.depositCondition||''}"></td>
-        <td><input class="form-control" name="tier_withdrawCondition" value="${tier.withdrawCondition||''}"></td>
-        <td><input class="form-control" name="tier_earlyClosure" value="${tier.earlyClosure||''}"></td>
-        <td><input class="form-control" name="tier_minBalance" value="${tier.minBalance||''}"></td>
-        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('tiers',${i})"><i class="fas fa-trash"></i></button></td>
-    </tr>`;
     document.getElementById('cmsProductForm').onsubmit = function(e){
         e.preventDefault();
         let obj = {
