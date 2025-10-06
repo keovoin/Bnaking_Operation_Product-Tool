@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Internal Product Tool</title>
+<link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+
+<!-- Navigation Tabs -->
+<div id="tabs">
+  <button onclick="showCategory('individual')">Individual Products</button>
+  <button onclick="showCategory('corporate')">Corporate Product</button>
+  <button onclick="showCategory('td')">TD</button>
+  <button onclick="showCategory('extra')">Extra</button>
+  <button onclick="showCategory('admin')">Admin</button>
+</div>
+
+<!-- Search and Filter -->
+<div id="searchContainer">
+  <input type="text" id="searchInput" placeholder="Search..." oninput="filterTable()" />
+  <select id="categoryFilter" onchange="filterTable()">
+    <option value="">All Categories</option>
+    <option value="individual">Individual Products</option>
+    <option value="corporate">Corporate Product</option>
+    <option value="td">TD</option>
+    <option value="extra">Extra</option>
+  </select>
+</div>
+
+<!-- Data Display -->
+<div id="content"></div>
+
+<!-- Admin Upload -->
+<div id="adminSection" style="display:none; margin-top:20px;">
+  <h3>Admin Functions</h3>
+  <input type="file" id="uploadFile" />
+  <button onclick="uploadData()">Upload Data</button>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
