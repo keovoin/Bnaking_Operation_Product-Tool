@@ -1,1096 +1,212 @@
-<!DOCTYPE html> 
-<html lang="en"> 
-<head> 
-    <meta charset="UTF-8"> 
-    <meta name="viewport" content="width=device-width, initial-scale=1.0"> 
-    <title>Banking Product Information Portal</title> 
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet"> 
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"> 
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script> 
-    <script src="https://cdnjs.cloudflare.com/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script> 
-    <style> 
-        :root { 
-            --primary-color: #1a4f8e; 
-            --secondary-color: #3498db; 
-            --accent-color: #f8f9fa; 
-            --text-color: #333; 
-            --border-color: #dee2e6; 
-        } 
-         
-        body { 
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
-            background-color: #f5f7fa; 
-            color: var(--text-color); 
-            padding-top: 20px; 
-        } 
-         
-        .header { 
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color)); 
-            color: white; 
-            border-radius: 10px; 
-            padding: 20px; 
-            margin-bottom: 25px; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1); 
-        } 
-         
-        .nav-tabs { 
-            background-color: white; 
-            border-radius: 8px; 
-            overflow: hidden; 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
-        } 
-         
-        .nav-tabs .nav-link { 
-            font-weight: 600; 
-            padding: 15px 20px; 
-            color: var(--text-color); 
-            border: none; 
-        } 
-         
-        .nav-tabs .nav-link.active { 
-            background-color: var(--primary-color); 
-            color: white; 
-            border: none; 
-        } 
-         
-        .search-container { 
-            background-color: white; 
-            border-radius: 8px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1); 
-        } 
-         
-        .search-box { 
-            position: relative; 
-        } 
-         
-        .search-box input { 
-            padding-left: 40px; 
-            border-radius: 25px; 
-        } 
-         
-        .search-box i { 
-            position: absolute; 
-            left: 15px; 
-            top: 12px; 
-            color: #6c757d; 
-        } 
-         
-        .card { 
-            border: none; 
-            border-radius: 10px; 
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05); 
-            margin-bottom: 20px; 
-            transition: transform 0.3s ease; 
-        } 
-         
-        .card:hover { 
-            transform: translateY(-5px); 
-        } 
-         
-        .card-header { 
-            background-color: var(--primary-color); 
-            color: white; 
-            border-radius: 10px 10px 0 0 !important; 
-            font-weight: 600; 
-        } 
-         
-        .info-table { 
-            width: 100%; 
-            margin-bottom: 0; 
-        } 
-         
-        .info-table th { 
-            width: 30%; 
-            background-color: var(--accent-color); 
-        } 
-         
-        .tab-content { 
-            padding: 20px 0; 
-        } 
-         
-        .product-list { 
-            max-height: 300px; 
-            overflow-y: auto; 
-        } 
-         
-        .list-group-item { 
-            border-left: none; 
-            border-right: none; 
-            cursor: pointer; 
-            transition: background-color 0.2s; 
-        } 
-         
-        .list-group-item:hover { 
-            background-color: var(--accent-color); 
-        } 
-         
-        .highlight { 
-            background-color: #fff8e1; 
-            padding: 2px 4px; 
-            border-radius: 3px; 
-        } 
-         
-        .section-title { 
-            border-bottom: 2px solid var(--secondary-color); 
-            padding-bottom: 8px; 
-            margin: 25px 0 15px; 
-            color: var(--primary-color); 
-        } 
-         
-        footer { 
-            text-align: center; 
-            padding: 20px; 
-            margin-top: 30px; 
-            color: #6c757d; 
-            font-size: 0.9rem; 
-        } 
-         
-        .upload-area { 
-            border: 2px dashed #ccc; 
-            border-radius: 10px; 
-            padding: 25px; 
-            text-align: center; 
-            margin: 20px 0; 
-            background-color: #f8f9fa; 
-            transition: all 0.3s; 
-        } 
-         
-        .upload-area:hover { 
-            border-color: var(--secondary-color); 
-            background-color: #e8f4ff; 
-        } 
-         
-        .upload-icon { 
-            font-size: 3rem; 
-            color: var(--secondary-color); 
-            margin-bottom: 15px; 
-        } 
-         
-        .password-prompt { 
-            background-color: #f8f9fa; 
-            border-radius: 10px; 
-            padding: 20px; 
-            margin-bottom: 20px; 
-        } 
-         
-        @media (max-width: 768px) { 
-            .info-table th { 
-                width: 40%; 
-            } 
-        } 
-    </style> 
-</head> 
-<body> 
-    <div class="container"> 
-        <div class="header text-center"> 
-            <h1><i class="fas fa-landmark me-2"></i>Banking Product Information Portal</h1> 
-            <p class="lead">Access detailed information about all banking products</p> 
-        </div> 
-         
-        <ul class="nav nav-tabs nav-justified" id="productTabs" role="tablist"> 
-            <li class="nav-item" role="presentation"> 
-                <button class="nav-link active" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab" aria-controls="individual" aria-selected="true"> 
-                    <i class="fas fa-user me-2"></i>Individual Products 
-                </button> 
-            </li> 
-            <li class="nav-item" role="presentation"> 
-                <button class="nav-link" id="corporate-tab" data-bs-toggle="tab" data-bs-target="#corporate" type="button" role="tab" aria-controls="corporate" aria-selected="false"> 
-                    <i class="fas fa-building me-2"></i>Corporate Products 
-                </button> 
-            </li> 
-            <li class="nav-item" role="presentation"> 
-                <button class="nav-link" id="td-tab" data-bs-toggle="tab" data-bs-target="#td" type="button" role="tab" aria-controls="td" aria-selected="false"> 
-                    <i class="fas fa-chart-line me-2"></i>Term Deposits 
-                </button> 
-            </li> 
-            <li class="nav-item" role="presentation"> 
-                <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="false"> 
-                    <i class="fas fa-file-upload me-2"></i>Update Data 
-                </button> 
-            </li> 
-        </ul> 
-         
-        <div class="tab-content" id="productTabsContent"> 
-            <!-- Individual Products Tab --> 
-            <div class="tab-pane fade show active" id="individual" role="tabpanel" aria-labelledby="individual-tab"> 
-                <div class="search-container"> 
-                    <div class="row"> 
-                        <div class="col-md-6"> 
-                            <div class="search-box"> 
-                                <i class="fas fa-search"></i> 
-                                <input type="text" id="individualSearch" class="form-control" placeholder="Search individual products..."> 
-                            </div> 
-                        </div> 
-                        <div class="col-md-6"> 
-                            <select id="individualFilter" class="form-select"> 
-                                <option value="">All Segments</option> 
-                                <option value="General Individual Customer">General Individual Customer</option> 
-                                <option value="Business Gold">Business Gold</option> 
-                                <option value="Personal Elite">Personal Elite</option> 
-                                <option value="Payroll">Payroll</option> 
-                                <option value="Personal Premier">Personal Premier</option> 
-                            </select> 
-                        </div> 
-                    </div> 
-                </div> 
-                 
-                <div class="row"> 
-                    <div class="col-md-4"> 
-                        <div class="card"> 
-                            <div class="card-header">Individual Products</div> 
-                            <div class="product-list list-group list-group-flush" id="individualProductsList"> 
-                                <!-- Products will be populated by JavaScript --> 
-                            </div> 
-                        </div> 
-                    </div> 
-                    <div class="col-md-8"> 
-                        <div id="individualProductDetail"> 
-                            <div class="card"> 
-                                <div class="card-body text-center p-5"> 
-                                    <i class="fas fa-search fa-3x mb-3 text-muted"></i> 
-                                    <h5>Select a product to view details</h5> 
-                                    <p class="text-muted">Choose a product from the list to see comprehensive information</p> 
-                                </div> 
-                            </div> 
-                        </div> 
-                    </div> 
-                </div> 
-            </div> 
-             
-            <!-- Corporate Products Tab --> 
-            <div class="tab-pane fade" id="corporate" role="tabpanel" aria-labelledby="corporate-tab"> 
-                <div class="search-container"> 
-                    <div class="row"> 
-                        <div class="col-md-6"> 
-                            <div class="search-box"> 
-                                <i class="fas fa-search"></i> 
-                                <input type="text" id="corporateSearch" class="form-control" placeholder="Search corporate products..."> 
-                            </div> 
-                        </div> 
-                        <div class="col-md-6"> 
-                            <select id="corporateFilter" class="form-select"> 
-                                <option value="">All Segments</option> 
-                                <option value="Corporate/Company">Corporate/Company</option> 
-                                <option value="Government">Government</option> 
-                                <option value="MFI">MFI</option> 
-                                <option value="Company/Business platinum">Company/Business platinum</option> 
-                            </select> 
-                        </div> 
-                    </div> 
-                </div> 
-                 
-                <div class="row"> 
-                    <div class="col-md-4"> 
-                        <div class="card"> 
-                            <div class="card-header">Corporate Products</div> 
-                            <div class="product-list list-group list-group-flush" id="corporateProductsList"> 
-                                <!-- Products will be populated by JavaScript --> 
-                            </div> 
-                        </div> 
-                    </div> 
-                    <div class="col-md-8"> 
-                        <div id="corporateProductDetail"> 
-                            <div class="card"> 
-                                <div class="card-body text-center p-5"> 
-                                    <i class="fas fa-search fa-3x mb-3 text-muted"></i> 
-                                    <h5>Select a product to view details</h5> 
-                                    <p class="text-muted">Choose a product from the list to see comprehensive information</p> 
-                                </div> 
-                            </div> 
-                        </div> 
-                    </div> 
-                </div> 
-            </div> 
-             
-            <!-- Term Deposits Tab --> 
-            <div class="tab-pane fade" id="td" role="tabpanel" aria-labelledby="td-tab"> 
-                <div class="search-container"> 
-                    <div class="row"> 
-                        <div class="col-md-6"> 
-                            <div class="search-box"> 
-                                <i class="fas fa-search"></i> 
-                                <input type="text" id="tdSearch" class="form-control" placeholder="Search term deposits..."> 
-                            </div> 
-                        </div> 
-                        <div class="col-md-6"> 
-                            <select id="tdFilter" class="form-select"> 
-                                <option value="">All Segments</option> 
-                                <option value="General Customer">General Customer</option> 
-                                <option value="MFI BILL PAY">MFI BILL PAY</option> 
-                                <option value="FI (TREASURY)">FI (TREASURY)</option> 
-                                <option value="Wing and RGC Staffs">Wing and RGC Staffs</option> 
-                            </select> 
-                        </div> 
-                    </div> 
-                </div> 
-                 
-                <div class="row"> 
-                    <div class="col-md-4"> 
-                        <div class="card"> 
-                            <div class="card-header">Term Deposit Products</div> 
-                            <div class="product-list list-group list-group-flush" id="tdProductsList"> 
-                                <!-- Products will be populated by JavaScript --> 
-                            </div> 
-                        </div> 
-                    </div> 
-                    <div class="col-md-8"> 
-                        <div id="tdProductDetail"> 
-                            <div class="card"> 
-                                <div class="card-body text-center p-5"> 
-                                    <i class="fas fa-search fa-3x mb-3 text-muted"></i> 
-                                    <h5>Select a product to view details</h5> 
-                                    <p class="text-muted">Choose a product from the list to see comprehensive information</p> 
-                                </div> 
-                            </div> 
-                        </div> 
-                    </div> 
-                </div> 
-            </div> 
-             
-            <!-- Upload Tab --> 
-            <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab"> 
-                <div class="row"> 
-                    <div class="col-md-8 mx-auto"> 
-                        <div class="card"> 
-                            <div class="card-header">Update Product Data</div> 
-                            <div class="card-body"> 
-                                <div id="passwordSection"> 
-                                    <h5 class="section-title">Authentication Required</h5> 
-                                    <p>Please enter the password to access the data update features.</p> 
-                                     
-                                    <div class="password-prompt"> 
-                                        <div class="mb-3"> 
-                                            <label for="adminPassword" class="form-label">Password</label> 
-                                            <input type="password" class="form-control" id="adminPassword" placeholder="Enter password"> 
-                                        </div> 
-                                        <button class="btn btn-primary" id="passwordSubmit">Submit</button> 
-                                    </div> 
-                                </div> 
-                                 
-                                <div id="uploadSection" style="display: none;"> 
-                                    <h5 class="section-title">Upload New Data</h5> 
-                                    <p>Upload an Excel file to update the product information. The file should follow the template format.</p> 
-                                     
-                                    <div class="upload-area" id="dropZone"> 
-                                        <i class="fas fa-cloud-upload-alt upload-icon"></i> 
-                                        <h5>Drag & Drop your Excel file here</h5> 
-                                        <p class="text-muted">or</p> 
-                                        <input type="file" id="fileUpload" accept=".xlsx,.xls" class="d-none"> 
-                                        <button class="btn btn-primary" onclick="document.getElementById('fileUpload').click()"> 
-                                            <i class="fas fa-file-excel me-2"></i>Browse Files 
-                                        </button> 
-                                        <p class="mt-3 small text-muted">Supported formats: .xlsx, .xls</p> 
-                                    </div> 
-                                     
-                                    <div id="uploadStatus" class="mt-3"></div> 
-                                     
-                                    <h5 class="section-title">Download Template</h5> 
-                                    <p>Use this template to ensure your Excel file has the correct format for uploading.</p> 
-                                    <button class="btn btn-outline-primary" id="downloadTemplate"> 
-                                        <i class="fas fa-download me-2"></i>Download Excel Template 
-                                    </button> 
-                                </div> 
-                            </div> 
-                        </div> 
-                    </div> 
-                </div> 
-            </div> 
-        </div> 
-         
-        <footer> 
-            <p>Banking Product Information Portal &copy; 2023 | Designed for SharePoint Integration</p> 
-        </footer> 
-    </div> 
- 
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script> 
-    <script> 
-        // Initialize product data from the provided Excel content 
-        let productData = { 
-            individual: [], 
-            corporate: [], 
-            td: [] 
-        }; 
- 
-        // Password for update access (in a real application, this would be securely stored) 
-        const ADMIN_PASSWORD = "admin123"; 
- 
-        // Initialize the application 
-        document.addEventListener('DOMContentLoaded', function() { 
-            // Parse the initial data from the provided Excel content 
-            parseInitialData(); 
-             
-            // Populate product lists 
-            populateProductList('individual', productData.individual); 
-            populateProductList('corporate', productData.corporate); 
-            populateProductList('td', productData.td); 
-             
-            // Set up search functionality 
-            setupSearch('individual'); 
-            setupSearch('corporate'); 
-            setupSearch('td'); 
-             
-            // Set up filter functionality 
-            setupFilter('individual'); 
-            setupFilter('corporate'); 
-            setupFilter('td'); 
-             
-            // Set up password authentication 
-            document.getElementById('passwordSubmit').addEventListener('click', authenticateUser); 
-             
-            // Set up file upload (will be enabled after authentication) 
-            setupFileUpload(); 
-             
-            // Set up template download (will be enabled after authentication) 
-            document.getElementById('downloadTemplate').addEventListener('click', downloadTemplate); 
-        }); 
- 
-        // Parse the initial data from the provided Excel content 
-        function parseInitialData() { 
-            // Individual Products 
-            productData.individual = [ 
-                { 
-                    name: "Saving Account-Migrant Worker Digital KCY", 
-                    type: "Saving", 
-                    segment: "General Individual Customer", 
-                    effectiveDate: "2025-Jan-11", 
-                    fees: [ 
-                        { name: "Monthly Account Services", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Internet Banking for Business", amount: "0", currency: "USD", frequency: "-", conditions: "Refer to IBB's Product term & condition" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Passbook", amount: "5", currency: "USD", frequency: "-", conditions: "Free of Charge: New, Re-issue on update, fully utilized. Charge Fee 5$: Lost, damaged, or account maintenance" }, 
-                        { name: "Dormant Fee", amount: "1", currency: "USD", frequency: "Monthly", conditions: "1USD/Month" }, 
-                        { name: "Account Statement", amount: "0", currency: "USD", frequency: "-", conditions: "Free of Charge: Hard copy (Max 30 pages). Free of Charge: soft copy" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" }, 
-                        { name: "Standing Instruction (Schedule Payment)", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Banker Cheque", amount: "10", currency: "USD", frequency: "Per Serial", conditions: "10 USD Per Serial" }, 
-                        { name: "Transfer Cross Province", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Cheque Book", amount: "0", currency: "USD", frequency: "-", conditions: "Not allowed" } 
-                    ], 
-                    limits: [ 
-                        { channel: "Send Money To WING", limitType: "PerTransaction", amount: "100000.0", currency: "USD", conditions: "Mobile App Limitation", taxStatus: "14% for Non-resident, 4% for resident" }, 
-                        { channel: "Send Money To Non WING", limitType: "PerTransaction", amount: "3000.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Bakong Scan", limitType: "PerTransaction", amount: "3000.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Direct Bank", limitType: "PerTransaction", amount: "3000.0", currency: "USD", conditions: "", taxStatus: "" } 
-                    ], 
-                    tiers: [ 
-                        { order: "1", operator: ">=", value: "5000", currency: "USD", rate: "3%", payout: "Monthly or upon closure", conditions: "USD EOD >= 5,000", depositCondition: "Unlimited fund replenishments in cash or non-cash forms are allowing, anytime any amount. Any types of KHR small noted will be accepted at with some application charge. Stain note (deposited OTC or CRM)", withdrawCondition: "3,000 USD from over counter", earlyClosure: "5 USD applied closing the account before six months from open date", minBalance: "USD 0.00" }, 
-                        { order: "2", operator: "<", value: "5000", currency: "USD", rate: "0.10%", payout: "Monthly or upon closure", conditions: "USD EOD < 5,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" }, 
-                        { order: "3", operator: ">=", value: "20000000", currency: "KHR", rate: "3%", payout: "Monthly or upon closure", conditions: "KHR EOD >= 20,000,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" }, 
-                        { order: "4", operator: "<", value: "20000000", currency: "KHR", rate: "0.10%", payout: "Monthly or upon closure", conditions: "KHR EOD < 20,000,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" } 
-                    ] 
-                }, 
-                { 
-                    name: "Saving Account-Digital Wac Light", 
-                    type: "Saving", 
-                    segment: "General Individual Customer", 
-                    effectiveDate: "2025-Jan-11", 
-                    fees: [ 
-                        { name: "Monthly Account Services", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Internet Banking for Business", amount: "0", currency: "USD", frequency: "-", conditions: "Refer to IBB's Product term & condition" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Passbook", amount: "0", currency: "USD", frequency: "-", conditions: "Not allowed" }, 
-                        { name: "Dormant Fee", amount: "1", currency: "USD", frequency: "Monthly", conditions: "1USD/Month" }, 
-                        { name: "Account Statement", amount: "0", currency: "USD", frequency: "-", conditions: "Free of Charge: Hard copy (Max 30 pages). Free of Charge: soft copy" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" }, 
-                        { name: "Standing Instruction (Schedule Payment)", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Banker Cheque", amount: "10", currency: "USD", frequency: "Per Serial", conditions: "10 USD Per Serial" }, 
-                        { name: "Transfer Cross Province", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Cheque Book", amount: "0", currency: "USD", frequency: "-", conditions: "Not allowed" } 
-                    ], 
-                    limits: [ 
-                        { channel: "Send Money To WING", limitType: "PerTransaction", amount: "100.0", currency: "USD", conditions: "Mobile App Limitation", taxStatus: "14% for Non-resident, 4% for resident" }, 
-                        { channel: "Send Money To Non WING", limitType: "PerTransaction", amount: "100.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Bakong Scan", limitType: "PerTransaction", amount: "100.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Direct Bank", limitType: "PerTransaction", amount: "100.0", currency: "USD", conditions: "", taxStatus: "" } 
-                    ], 
-                    tiers: [ 
-                        { order: "1", operator: ">=", value: "5000", currency: "USD", rate: "3%", payout: "Monthly or upon closure", conditions: "USD EOD >= 5,000", depositCondition: "Unlimited fund replenishments in cash or non-cash forms are allowing, anytime any amount. Any types of KHR small noted will be accepted at with some application charge. Stain note (deposited OTC or CRM)", withdrawCondition: "100 USD from over counter", earlyClosure: "5 USD applied closing the account before six months from open date", minBalance: "USD 0.00" }, 
-                        { order: "2", operator: "<", value: "5000", currency: "USD", rate: "0.10%", payout: "Monthly or upon closure", conditions: "USD EOD < 5,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" }, 
-                        { order: "3", operator: ">=", value: "20000000", currency: "KHR", rate: "3%", payout: "Monthly or upon closure", conditions: "KHR EOD >= 20,000,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" }, 
-                        { order: "4", operator: "<", value: "20000000", currency: "KHR", rate: "0.10%", payout: "Monthly or upon closure", conditions: "KHR EOD < 20,000,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" } 
-                    ] 
-                }, 
-                { 
-                    name: "Saving Account-HIGH YIELD SAVING BUSINESS GOLD-GrowHigh", 
-                    type: "Saving", 
-                    segment: "General Individual Customer/Business Gold", 
-                    effectiveDate: "2025-Jan-11", 
-                    fees: [ 
-                        { name: "Monthly Account Services", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Internet Banking for Business", amount: "0", currency: "USD", frequency: "-", conditions: "Refer to IBB's Product term & condition" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Passbook", amount: "5", currency: "USD", frequency: "-", conditions: "Free of Charge: New, Re-issue on update, fully utilized. Charge Fee 5$: Lost, damaged, or account maintenance" }, 
-                        { name: "Dormant Fee", amount: "1", currency: "USD", frequency: "Monthly", conditions: "1USD/Month" }, 
-                        { name: "Account Statement", amount: "0", currency: "USD", frequency: "-", conditions: "Free of Charge: Hard copy (Max 30 pages). Free of Charge: soft copy" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" }, 
-                        { name: "Standing Instruction (Schedule Payment)", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Banker Cheque", amount: "10", currency: "USD", frequency: "Per Serial", conditions: "10 USD Per Serial" }, 
-                        { name: "Transfer Cross Province", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Cheque Book", amount: "5-50", currency: "USD", frequency: "-", conditions: "Charge Fee 5$: Cheque book issuance. Charge Fee 10$: Stop payment cheque, 1 check leave & A series of cheque in the same cheque book to be stopped or cancelled. Charge Fee 50$: Dishonored Cheque due to insufficient fund/Stop payment with insufficient fund. Charge Fee 10$: Dishonored Cheque due to other technical reason" } 
-                    ], 
-                    limits: [ 
-                        { channel: "Send Money To WING", limitType: "PerTransaction", amount: "250000.0", currency: "USD", conditions: "Mobile App Limitation", taxStatus: "14% for Non-resident, 4% for resident" }, 
-                        { channel: "Send Money To Non WING", limitType: "PerTransaction", amount: "50000.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Bakong Scan", limitType: "PerTransaction", amount: "50000.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Direct Bank", limitType: "PerTransaction", amount: "10000.0", currency: "USD", conditions: "", taxStatus: "" } 
-                    ], 
-                    tiers: [ 
-                        { order: "1", operator: ">=", value: "5000", currency: "USD", rate: "3%", payout: "Monthly or upon closure", conditions: "USD EOD >= 5,000", depositCondition: "Unlimited fund replenishments in cash or non-cash forms are allowing, anytime any amount. Any types of KHR small noted will be accepted at with some application charge. Stain note (deposited OTC or CRM)", withdrawCondition: "Unlimited withdrawal from over counter", earlyClosure: "5 USD applied closing the account before six months from open date", minBalance: "USD 0.00" }, 
-                        { order: "2", operator: "<", value: "5000", currency: "USD", rate: "0.10%", payout: "Monthly or upon closure", conditions: "USD EOD < 5,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" }, 
-                        { order: "3", operator: ">=", value: "20000000", currency: "KHR", rate: "3%", payout: "Monthly or upon closure", conditions: "KHR EOD >= 20,000,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" }, 
-                        { order: "4", operator: "<", value: "20000000", currency: "KHR", rate: "0.10%", payout: "Monthly or upon closure", conditions: "KHR EOD < 20,000,000", depositCondition: "", withdrawCondition: "", earlyClosure: "", minBalance: "" } 
-                    ] 
-                } 
-            ]; 
- 
-            // Corporate Products 
-            productData.corporate = [ 
-                { 
-                    name: "Current Account - Corporate", 
-                    type: "Current", 
-                    segment: "Corporate/Company", 
-                    effectiveDate: "2025-Jan-11", 
-                    fees: [ 
-                        { name: "Monthly Account Services", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Internet Banking for Business", amount: "0", currency: "USD", frequency: "-", conditions: "Refer to IBB's Product term & condition" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Not Applicable" }, 
-                        { name: "Passbook", amount: "0", currency: "USD", frequency: "-", conditions: "Not Applicable" }, 
-                        { name: "Dormant Fee", amount: "1", currency: "USD", frequency: "Monthly", conditions: "" }, 
-                        { name: "Account Statement", amount: "0", currency: "USD", frequency: "-", conditions: "Free of Charge: Hard copy (Max 30 pages). Free of Charge: soft copy" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" }, 
-                        { name: "Banker Cheque", amount: "10", currency: "USD", frequency: "Per Serial", conditions: "10 USD Per Serial" }, 
-                        { name: "Transfer Cross Province", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" }, 
-                        { name: "Cheque Book", amount: "5-50", currency: "USD", frequency: "-", conditions: "Charge Fee 5$: Cheque book issuance. Charge Fee 10$: Stop payment cheque, 1 check leave & A series of cheque in the same cheque book to be stopped or cancelled. Charge Fee 50$: Dishonored Cheque due to insufficient fund/Stop payment with insufficient fund. Charge Fee 10$: Dishonored Cheque due to other technical reason" } 
-                    ], 
-                    limits: [ 
-                        { channel: "Send Money To WING", limitType: "PerTransaction", amount: "1000000.0", currency: "USD", conditions: "Mobile App Limitation (validate vs Mobile not allowed)", taxStatus: "14% for Non-resident, 4% for resident" }, 
-                        { channel: "Send Money To Non WING", limitType: "PerTransaction", amount: "50000.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Bakong Scan", limitType: "PerTransaction", amount: "50000.0", currency: "USD", conditions: "", taxStatus: "" }, 
-                        { channel: "Fund Transfer - Direct Bank", limitType: "PerTransaction", amount: "10000.0", currency: "USD", conditions: "", taxStatus: "" } 
-                    ], 
-                    tiers: [ 
-                        { order: "1", operator: "N/A", value: "", currency: "", rate: "0%", payout: "No interest", conditions: "Not applicable", depositCondition: "Unlimited fund replenishments in cash or non-cash forms are allowing, anytime any amount. Any types of KHR small noted will be accepted at with some application charge. Stain note (deposited OTC or CRM)", withdrawCondition: "Unlimited withdrawal from over counter", earlyClosure: "5 USD applied closing the account before six months from open date", minBalance: "USD 0.00" } 
-                    ] 
-                } 
-            ]; 
- 
-            // Term Deposits 
-            productData.td = [ 
-                { 
-                    name: "Term Deposit", 
-                    type: "TD", 
-                    segment: "General Customer, VIP, Payroll, Government, SME, Corporate", 
-                    effectiveDate: "2025-01-11", 
-                    fees: [ 
-                        { name: "Monthly Account services", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Fixed Deposit Certificate", amount: "0-5", currency: "USD", frequency: "-", conditions: "Free of charge Fixed Deposit certificate issuance (During account opening). Free of charge Reissuance of Fixed Deposit Certificate (Renewal of FD). 5 USD Fixed Deposit certificate issuance (Due to lost, damaged, or account maintenance). Digital Certificate Downloadable via App- Free" }, 
-                        { name: "Account Statement", amount: "0", currency: "USD", frequency: "-", conditions: "Free of Charge: Hard copy (Max 30 pages). Free of Charge: Soft copy" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" } 
-                    ], 
-                    terms: [ 
-                        { months: "1", interestUSD: "0.02", interestKHR: "0.02", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "2", interestUSD: "0.021", interestKHR: "0.021", monthlyUSD: "0.0185", monthlyKHR: "0.0185" }, 
-                        { months: "3", interestUSD: "0.025", interestKHR: "0.025", monthlyUSD: "0.0225", monthlyKHR: "0.0225" }, 
-                        { months: "6", interestUSD: "0.035", interestKHR: "0.035", monthlyUSD: "0.0325", monthlyKHR: "0.0325" }, 
-                        { months: "12", interestUSD: "0.045", interestKHR: "0.045", monthlyUSD: "0.04", monthlyKHR: "0.04" }, 
-                        { months: "36", interestUSD: "0.055", interestKHR: "0.055", monthlyUSD: "0.04", monthlyKHR: "0.04" } 
-                    ], 
-                    conditions: { 
-                        deposit: "Open new account for new deposit, Rollover from existing term deposit", 
-                        withdrawal: "Full deposit amount at maturity, Full deposit amount at account closure (Early Redemption), Partial withdrawal â€“ NOT ALLOWED", 
-                        rollover: "Principle only, Principal and interest, Close at maturity", 
-                        minBalance: "USD10/KHR40,000 (Both Individual Resident and Individual Non- Resident)", 
-                        closure: "Close TD Channel At all Wing Bank branches & Wing Bank app, Early Redemption/ Close TD Before Term", 
-                        taxStatus: "14% for Non-resident, 6% for resident", 
-                        joinAccounts: "Only applicable for same customer category", 
-                        benefits: "Customer can request digital loan against TD with limit up to 95% of Term Deposit Balance" 
-                    } 
-                }, 
-                { 
-                    name: "Term Deposit - MFI BILL PAY TERM DEPOSIT", 
-                    type: "TD", 
-                    segment: "MFI BILL PAY", 
-                    effectiveDate: "2025-01-11", 
-                    fees: [ 
-                        { name: "Monthly Account services", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Fixed Deposit Certificate", amount: "0-5", currency: "USD", frequency: "-", conditions: "Free of charge Fixed Deposit certificate issuance (During account opening). Free of charge Reissuance of Fixed Deposit Certificate (Renewal of FD). 5 USD Fixed Deposit certificate issuance (Due to lost, damaged, or account maintenance). Digital Certificate Downloadable via App- Free" }, 
-                        { name: "Account Statement", amount: "N/A", currency: "USD", frequency: "-", conditions: "Not Applicable" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" } 
-                    ], 
-                    terms: [ 
-                        { months: "1", interestUSD: "0.003", interestKHR: "0.003", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "3", interestUSD: "0.006", interestKHR: "0.006", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "6", interestUSD: "0.0085", interestKHR: "0.0085", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "12", interestUSD: "0.011", interestKHR: "0.011", monthlyUSD: "N/A", monthlyKHR: "N/A" } 
-                    ], 
-                    conditions: { 
-                        deposit: "Open new account for new deposit, Rollover from existing term deposit", 
-                        withdrawal: "Full deposit amount at maturity, Full deposit amount at account closure (Early Redemption), Partial withdrawal â€“ NOT ALLOWED", 
-                        rollover: "Principle only, Principal and interest, Close at maturity", 
-                        minBalance: "USD10/KHR40,000 (Both Individual Resident and Individual Non- Resident)", 
-                        closure: "Close TD Channel At all Wing Bank branches & Wing Bank app, Early Redemption/ Close TD Before Term", 
-                        taxStatus: "14% for Non-resident, 0% for resident", 
-                        joinAccounts: "Only applicable for same customer category", 
-                        benefits: "Customer can request digital loan against TD with limit up to 95% of Term Deposit Balance" 
-                    } 
-                }, 
-                { 
-                    name: "Term Deposit - FI (TREASURY) TERM DEPOSIT", 
-                    type: "TD", 
-                    segment: "FI (TREASURY)", 
-                    effectiveDate: "2025-01-11", 
-                    fees: [ 
-                        { name: "Monthly Account services", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Fixed Deposit Certificate", amount: "0-5", currency: "USD", frequency: "-", conditions: "Free of charge Fixed Deposit certificate issuance (During account opening). Free of charge Reissuance of Fixed Deposit Certificate (Renewal of FD). 5 USD Fixed Deposit certificate issuance (Due to lost, damaged, or account maintenance). Digital Certificate Downloadable via App- Free" }, 
-                        { name: "Account Statement", amount: "N/A", currency: "USD", frequency: "-", conditions: "Not Applicable" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" } 
-                    ], 
-                    terms: [ 
-                        { months: "1", interestUSD: "0.0025", interestKHR: "0.0025", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "3", interestUSD: "0.005", interestKHR: "0.005", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "6", interestUSD: "0.0075", interestKHR: "0.0075", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "12", interestUSD: "0.01", interestKHR: "0.01", monthlyUSD: "N/A", monthlyKHR: "N/A" } 
-                    ], 
-                    conditions: { 
-                        deposit: "Open new account for new deposit, Rollover from existing term deposit", 
-                        withdrawal: "Full deposit amount at maturity, Full deposit amount at account closure (Early Redemption), Partial withdrawal â€“ NOT ALLOWED", 
-                        rollover: "Principle only, Principal and interest, Close at maturity", 
-                        minBalance: "USD10/KHR40,000 (Both Individual Resident and Individual Non- Resident)", 
-                        closure: "Close TD Channel At all Wing Bank branches & Wing Bank app, Early Redemption/ Close TD Before Term", 
-                        taxStatus: "14% for Non-resident, 0% for resident", 
-                        joinAccounts: "Only applicable for same customer category", 
-                        benefits: "Customer can request digital loan against TD with limit up to 95% of Term Deposit Balance" 
-                    } 
-                }, 
-                { 
-                    name: "Term Deposit - WING & RGC STAFFS", 
-                    type: "TD", 
-                    segment: "All Wing and All RGC Staffs", 
-                    effectiveDate: "2025-01-11", 
-                    fees: [ 
-                        { name: "Monthly Account services", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Mobile Banking", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Fixed Deposit Certificate", amount: "0-5", currency: "USD", frequency: "-", conditions: "Free of charge Fixed Deposit certificate issuance (During account opening). Free of charge Reissuance of Fixed Deposit Certificate (Renewal of FD). 5 USD Fixed Deposit certificate issuance (Due to lost, damaged, or account maintenance). Digital Certificate Downloadable via App- Free" }, 
-                        { name: "Account Statement", amount: "0", currency: "USD", frequency: "-", conditions: "Free of Charge: Hard copy (Max 30 pages). Free of Charge: Soft copy" }, 
-                        { name: "Certify Account Balance", amount: "0", currency: "USD", frequency: "-", conditions: "Free of charge" }, 
-                        { name: "Audit Confirm Balance", amount: "10", currency: "USD", frequency: "Per Request", conditions: "10 USD Per request" } 
-                    ], 
-                    terms: [ 
-                        { months: "1", interestUSD: "0.03", interestKHR: "0.03", monthlyUSD: "N/A", monthlyKHR: "N/A" }, 
-                        { months: "3", interestUSD: "0.035", interestKHR: "0.035", monthlyUSD: "0.0325", monthlyKHR: "0.0325" }, 
-                        { months: "6", interestUSD: "0.045", interestKHR: "0.045", monthlyUSD: "0.0425", monthlyKHR: "0.0425" }, 
-                        { months: "12", interestUSD: "0.055", interestKHR: "0.055", monthlyUSD: "0.0525", monthlyKHR: "0.0525" }, 
-                        { months: "36", interestUSD: "0.065", interestKHR: "0.065", monthlyUSD: "0.06", monthlyKHR: "0.06" } 
-                    ], 
-                    conditions: { 
-                        deposit: "Open new account for new deposit, Rollover from existing term deposit", 
-                        withdrawal: "Full deposit amount at maturity, Full deposit amount at account closure (Early Redemption), Partial withdrawal â€“ NOT ALLOWED", 
-                        rollover: "Principle only, Principal and interest, Close at maturity", 
-                        minBalance: "USD10/KHR40,000 (Both Individual Resident and Individual Non- Resident)", 
-                        closure: "Close TD Channel At all Wing Bank branches & Wing Bank app, Early Redemption/ Close TD Before Term", 
-                        taxStatus: "14% for Non-resident, 6% for resident", 
-                        joinAccounts: "Only applicable for same customer category", 
-                        benefits: "Customer can request digital loan against TD with limit up to 95% of Term Deposit Balance" 
-                    } 
-                } 
-            ]; 
-        } 
- 
-        // Populate product list 
-        function populateProductList(type, products) { 
-            const listElement = document.getElementById(`${type}ProductsList`); 
-            listElement.innerHTML = ''; 
-             
-            if (products.length === 0) { 
-                listElement.innerHTML = '<div class="list-group-item text-muted">No products found</div>'; 
-                return; 
-            } 
-             
-            products.forEach(product => { 
-                const item = document.createElement('button'); 
-                item.type = 'button'; 
-                item.className = 'list-group-item list-group-item-action'; 
-                item.textContent = product.name; 
-                item.addEventListener('click', () => showProductDetails(type, product)); 
-                listElement.appendChild(item); 
-            }); 
-        } 
- 
-        // Set up search functionality 
-        function setupSearch(type) { 
-            const searchInput = document.getElementById(`${type}Search`); 
-            searchInput.addEventListener('input', () => filterProducts(type)); 
-        } 
- 
-        // Set up filter functionality 
-        function setupFilter(type) { 
-            const filterSelect = document.getElementById(`${type}Filter`); 
-            filterSelect.addEventListener('change', () => filterProducts(type)); 
-        } 
- 
-        // Filter products based on search and filter criteria 
-        function filterProducts(type) { 
-            const searchText = document.getElementById(`${type}Search`).value.toLowerCase(); 
-            const filterValue = document.getElementById(`${type}Filter`).value; 
-            const products = productData[type]; 
-             
-            const filteredProducts = products.filter(product => { 
-                const matchesSearch = product.name.toLowerCase().includes(searchText); 
-                const matchesFilter = filterValue === '' || product.segment.includes(filterValue); 
-                return matchesSearch && matchesFilter; 
-            }); 
-             
-            populateProductList(type, filteredProducts); 
-             
-            // Clear details if no products match 
-            if (filteredProducts.length === 0) { 
-                document.getElementById(`${type}ProductDetail`).innerHTML = ` 
-                    <div class="card"> 
-                        <div class="card-body text-center p-5"> 
-                            <i class="fas fa-exclamation-circle fa-3x mb-3 text-muted"></i> 
-                            <h5>No products found</h5> 
-                            <p class="text-muted">Try adjusting your search or filter criteria</p> 
-                        </div> 
-                    </div> 
-                `; 
-            } 
-        } 
- 
-        // Show product details 
-        function showProductDetails(type, product) { 
-            const detailElement = document.getElementById(`${type}ProductDetail`); 
-             
-            if (type === 'td') { 
-                // Term Deposit details 
-                detailElement.innerHTML = ` 
-                    <div class="card"> 
-                        <div class="card-header">${product.name}</div> 
-                        <div class="card-body"> 
-                            <h5 class="section-title">Product Information</h5> 
-                            <table class="table info-table table-striped"> 
-                                <tr><th>Product Type</th><td>${product.type}</td></tr> 
-                                <tr><th>Segment</th><td>${product.segment}</td></tr> 
-                                <tr><th>Effective Date</th><td>${product.effectiveDate}</td></tr> 
-                            </table> 
-                             
-                            <h5 class="section-title">Fees</h5> 
-                            <div class="table-responsive"> 
-                                <table class="table table-bordered"> 
-                                    <thead class="table-light"> 
-                                        <tr> 
-                                            <th>Fee Name</th> 
-                                            <th>Amount</th> 
-                                            <th>Currency</th> 
-                                            <th>Frequency</th> 
-                                            <th>Conditions</th> 
-                                        </tr> 
-                                    </thead> 
-                                    <tbody> 
-                                        ${product.fees.map(fee => ` 
-                                            <tr> 
-                                                <td>${fee.name}</td> 
-                                                <td>${fee.amount}</td> 
-                                                <td>${fee.currency}</td> 
-                                                <td>${fee.frequency}</td> 
-                                                <td>${fee.conditions}</td> 
-                                            </tr> 
-                                        `).join('')} 
-                                    </tbody> 
-                                </table> 
-                            </div> 
-                             
-                            <h5 class="section-title">Interest Rates</h5> 
-                            <div class="table-responsive"> 
-                                <table class="table table-bordered"> 
-                                    <thead class="table-light"> 
-                                        <tr> 
-                                            <th>Term (Months)</th> 
-                                            <th>Interest Rate (USD)</th> 
-                                            <th>Interest Rate (KHR)</th> 
-                                            <th>Monthly Interest (USD)</th> 
-                                            <th>Monthly Interest (KHR)</th> 
-                                        </tr> 
-                                    </thead> 
-                                    <tbody> 
-                                        ${product.terms.map(term => ` 
-                                            <tr> 
-                                                <td>${term.months}</td> 
-                                                <td>${term.interestUSD}</td> 
-                                                <td>${term.interestKHR}</td> 
-                                                <td>${term.monthlyUSD}</td> 
-                                                <td>${term.monthlyKHR}</td> 
-                                            </tr> 
-                                        `).join('')} 
-                                    </tbody> 
-                                </table> 
-                            </div> 
-                             
-                            <h5 class="section-title">Conditions</h5> 
-                            <table class="table info-table table-striped"> 
-                                <tr><th>Deposit Condition</th><td>${product.conditions.deposit}</td></tr> 
-                                <tr><th>Withdrawal Condition</th><td>${product.conditions.withdrawal}</td></tr> 
-                                <tr><th>Rollover Condition</th><td>${product.conditions.rollover}</td></tr> 
-                                <tr><th>Minimum Balance</th><td>${product.conditions.minBalance}</td></tr> 
-                                <tr><th>Closure Channel</th><td>${product.conditions.closure}</td></tr> 
-                                <tr><th>Tax Status</th><td>${product.conditions.taxStatus}</td></tr> 
-                                <tr><th>Join TD Accounts</th><td>${product.conditions.joinAccounts}</td></tr> 
-                                <tr><th>Additional Benefits</th><td>${product.conditions.benefits}</td></tr> 
-                            </table> 
-                        </div> 
-                    </div> 
-                `; 
-            } else { 
-                // Individual and Corporate details 
-                detailElement.innerHTML = ` 
-                    <div class="card"> 
-                        <div class="card-header">${product.name}</div> 
-                        <div class="card-body"> 
-                            <h5 class="section-title">Product Information</h5> 
-                            <table class="table info-table table-striped"> 
-                                <tr><th>Product Type</th><td>${product.type}</td></tr> 
-                                <tr><th>Segment</th><td>${product.segment}</td></tr> 
-                                <tr><th>Effective Date</th><td>${product.effectiveDate}</td></tr> 
-                            </table> 
-                             
-                            <h5 class="section-title">Fees</h5> 
-                            <div class="table-responsive"> 
-                                <table class="table table-bordered"> 
-                                    <thead class="table-light"> 
-                                        <tr> 
-                                            <th>Fee Name</th> 
-                                            <th>Amount</th> 
-                                            <th>Currency</th> 
-                                            <th>Frequency</th> 
-                                            <th>Conditions</th> 
-                                        </tr> 
-                                    </thead> 
-                                    <tbody> 
-                                        ${product.fees.map(fee => ` 
-                                            <tr> 
-                                                <td>${fee.name}</td> 
-                                                <td>${fee.amount}</td> 
-                                                <td>${fee.currency}</td> 
-                                                <td>${fee.frequency}</td> 
-                                                <td>${fee.conditions}</td> 
-                                            </tr> 
-                                        `).join('')} 
-                                    </tbody> 
-                                </table> 
-                            </div> 
-                             
-                            <h5 class="section-title">Transaction Limits</h5> 
-                            <div class="table-responsive"> 
-                                <table class="table table-bordered"> 
-                                    <thead class="table-light"> 
-                                        <tr> 
-                                            <th>Channel</th> 
-                                            <th>Limit Type</th> 
-                                            <th>Amount</th> 
-                                            <th>Currency</th> 
-                                            <th>Conditions</th> 
-                                            <th>Tax Status</th> 
-                                        </tr> 
-                                    </thead> 
-                                    <tbody> 
-                                        ${product.limits.map(limit => ` 
-                                            <tr> 
-                                                <td>${limit.channel}</td> 
-                                                <td>${limit.limitType}</td> 
-                                                <td>${limit.amount}</td> 
-                                                <td>${limit.currency}</td> 
-                                                <td>${limit.conditions}</td> 
-                                                <td>${limit.taxStatus}</td> 
-                                            </tr> 
-                                        `).join('')} 
-                                    </tbody> 
-                                </table> 
-                            </div> 
-                             
-                            <h5 class="section-title">Interest Tiers</h5> 
-                            <div class="table-responsive"> 
-                                <table class="table table-bordered"> 
-                                    <thead class="table-light"> 
-                                        <tr> 
-                                            <th>Tier</th> 
-                                            <th>Operator</th> 
-                                            <th>Value</th> 
-                                            <th>Currency</th> 
-                                            <th>Rate</th> 
-                                            <th>Payout Frequency</th> 
-                                            <th>Conditions</th> 
-                                            <th>Deposit Condition</th> 
-                                            <th>Withdrawal Condition</th> 
-                                            <th>Early Closure</th> 
-                                            <th>Minimum Balance</th> 
-                                        </tr> 
-                                    </thead> 
-                                    <tbody> 
-                                        ${product.tiers.map(tier => ` 
-                                            <tr> 
-                                                <td>${tier.order}</td> 
-                                                <td>${tier.operator}</td> 
-                                                <td>${tier.value}</td> 
-                                                <td>${tier.currency}</td> 
-                                                <td>${tier.rate}</td> 
-                                                <td>${tier.payout}</td> 
-                                                <td>${tier.conditions}</td> 
-                                                <td>${tier.depositCondition}</td> 
-                                                <td>${tier.withdrawCondition}</td> 
-                                                <td>${tier.earlyClosure}</td> 
-                                                <td>${tier.minBalance}</td> 
-                                            </tr> 
-                                        `).join('')} 
-                                    </tbody> 
-                                </table> 
-                            </div> 
-                        </div> 
-                    </div> 
-                `; 
-            } 
-        } 
- 
-        // Authenticate user for update access 
-        function authenticateUser() { 
-            const passwordInput = document.getElementById('adminPassword'); 
-            const password = passwordInput.value; 
-             
-            if (password === ADMIN_PASSWORD) { 
-                document.getElementById('passwordSection').style.display = 'none'; 
-                document.getElementById('uploadSection').style.display = 'block'; 
-            } else { 
-                alert('Incorrect password. Please try again.'); 
-                passwordInput.value = ''; 
-            } 
-        } 
- 
-        // Set up file upload functionality 
-        function setupFileUpload() { 
-            const fileUpload = document.getElementById('fileUpload'); 
-            const dropZone = document.getElementById('dropZone'); 
-            const uploadStatus = document.getElementById('uploadStatus'); 
-             
-            // Handle file selection 
-            fileUpload.addEventListener('change', function(e) { 
-                if (this.files && this.files[0]) { 
-                    handleFile(this.files[0]); 
-                } 
-            }); 
-             
-            // Drag and drop handling 
-            dropZone.addEventListener('dragover', function(e) { 
-                e.preventDefault(); 
-                this.style.borderColor = '#3498db'; 
-                this.style.backgroundColor = '#e8f4ff'; 
-            }); 
-             
-            dropZone.addEventListener('dragleave', function(e) { 
-                e.preventDefault(); 
-                this.style.borderColor = '#ccc'; 
-                this.style.backgroundColor = '#f8f9fa'; 
-            }); 
-             
-            dropZone.addEventListener('drop', function(e) { 
-                e.preventDefault(); 
-                this.style.borderColor = '#ccc'; 
-                this.style.backgroundColor = '#f8f9fa'; 
-                 
-                if (e.dataTransfer.files && e.dataTransfer.files[0]) { 
-                    handleFile(e.dataTransfer.files[0]); 
-                } 
-            }); 
-             
-            function handleFile(file) { 
-                const fileName = file.name; 
-                const fileExt = fileName.split('.').pop().toLowerCase(); 
-                 
-                if (fileExt !== 'xlsx' && fileExt !== 'xls') { 
-                    uploadStatus.innerHTML = `<div class="alert alert-danger">Please select an Excel file (.xlsx or .xls)</div>`; 
-                    return; 
-                } 
-                 
-                uploadStatus.innerHTML = `<div class="alert alert-info">Processing file: ${fileName}...</div>`; 
-                 
-                // In a real implementation, you would process the Excel file here 
-                // For this example, we'll simulate processing 
-                setTimeout(() => { 
-                    uploadStatus.innerHTML = `<div class="alert alert-success">File processed successfully! Data has been updated.</div>`; 
-                     
-                    // Simulate adding a new product 
-                    const newProduct = { 
-                        name: "New Product from Upload", 
-                        type: "Saving", 
-                        segment: "General Individual Customer", 
-                        effectiveDate: "2023-Nov-15", 
-                        fees: [ 
-                            { name: "Monthly Account Services", amount: "0", currency: "USD", frequency: "Monthly", conditions: "Free of charge" } 
-                        ], 
-                        limits: [ 
-                            { channel: "Send Money To WING", limitType: "PerTransaction", amount: "50000.0", currency: "USD", conditions: "Mobile App Limitation", taxStatus: "14% for Non-resident, 4% for resident" } 
-                        ], 
-                        tiers: [ 
-                            { order: "1", operator: ">=", value: "1000", currency: "USD", rate: "2.5%", payout: "Monthly or upon closure", conditions: "USD EOD >= 1,000", depositCondition: "Standard deposit conditions", withdrawCondition: "Standard withdrawal conditions", earlyClosure: "5 USD applied closing the account before six months from open date", minBalance: "USD 0.00" } 
-                        ] 
-                    }; 
-                     
-                    productData.individual.push(newProduct); 
-                    populateProductList('individual', productData.individual); 
-                     
-                    // Show success message for 3 seconds 
-                    setTimeout(() => { 
-                        uploadStatus.innerHTML = ''; 
-                    }, 3000); 
-                }, 2000); 
-            } 
-        } 
- 
-        // Download Excel template 
-        function downloadTemplate() { 
-            // Create workbook 
-            const workbook = new ExcelJS.Workbook(); 
-             
-            // Add worksheets 
-            const individualSheet = workbook.addWorksheet('Individual Products'); 
-            const corporateSheet = workbook.addWorksheet('Corporate Products'); 
-            const tdSheet = workbook.addWorksheet('Term Deposits'); 
-             
-            // Define headers for each sheet based on your data structure 
-            const individualHeaders = ['Product_Name', 'Product_Type', 'Segment', 'Effective_Date', 'Service Fee_Name', 'Amount', 'Currency', 'Frequency', 'Channel', 'Conditions_Notes']; 
-            individualSheet.addRow(individualHeaders); 
-             
-            const corporateHeaders = ['Product_Name', 'Product_Type', 'Segment', 'Effective_Date', 'Service Fee_Name', 'Amount', 'Currency', 'Frequency', 'Channel', 'Conditions_Notes']; 
-            corporateSheet.addRow(corporateHeaders); 
-             
-            const tdHeaders = ['Product_Name', 'Product_Type', 'Segment', 'Effective_Date', 'Fee_Name', 'Amount', 'Currency', 'Frequency', 'Channel', 'Conditions_Notes']; 
-            tdSheet.addRow(tdHeaders); 
-             
-            // Style headers 
-            [individualSheet, corporateSheet, tdSheet].forEach(sheet => { 
-                sheet.getRow(1).font = { bold: true }; 
-                sheet.getRow(1).fill = { 
-                    type: 'pattern', 
-                    pattern: 'solid', 
-                    fgColor: { argb: 'FFE0E0E0' } 
-                }; 
-            }); 
-             
-            // Generate the Excel file 
-            workbook.xlsx.writeBuffer().then(function(buffer) { 
-                const blob = new Blob([buffer], { type: 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet' }); 
-                saveAs(blob, 'Banking_Products_Template.xlsx'); 
-            }); 
-        } 
-    </script> 
-</body> 
-</html>
+<!-- ... (previous unchanged HTML) ... -->
+<!-- CMS Tab -->
+<div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+    <div class="row">
+        <div class="col-md-12">
+            <div class="card my-3">
+                <div class="card-header">Product Data Management (CMS)</div>
+                <div class="card-body" id="cmsAuthSection">
+                    <div id="cmsLoginForm">
+                        <h5 class="section-title">Login Required</h5>
+                        <p>Only authorized user can access this section.</p>
+                        <div class="mb-3">
+                            <label for="cmsUsername" class="form-label">Username</label>
+                            <input type="text" class="form-control" id="cmsUsername" placeholder="Username">
+                        </div>
+                        <div class="mb-3">
+                            <label for="cmsPassword" class="form-label">Password</label>
+                            <input type="password" class="form-control" id="cmsPassword" placeholder="Password">
+                        </div>
+                        <button class="btn btn-primary" id="cmsLoginBtn">Login</button>
+                    </div>
+                </div>
+                <div class="card-body" id="cmsSection" style="display:none;">
+                    <ul class="nav nav-pills mb-3" id="cmsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="cms-individual-tab" data-bs-toggle="pill" data-bs-target="#cms-individual" type="button" role="tab">Individual</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cms-corporate-tab" data-bs-toggle="pill" data-bs-target="#cms-corporate" type="button" role="tab">Corporate</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="cms-td-tab" data-bs-toggle="pill" data-bs-target="#cms-td" type="button" role="tab">Term Deposits</button>
+                        </li>
+                    </ul>
+                    <div class="tab-content" id="cmsTabsContent">
+                        <!-- Repeat for each type -->
+                        <div class="tab-pane fade show active" id="cms-individual" role="tabpanel">
+                            <button class="btn btn-success mb-2" onclick="showAddEditModal('individual')"><i class="fas fa-plus"></i> Add Product</button>
+                            <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('individual')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
+                            <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('individual')"><i class="fas fa-download"></i> Download Template</button>
+                            <div id="cms-individual-table"></div>
+                        </div>
+                        <div class="tab-pane fade" id="cms-corporate" role="tabpanel">
+                            <button class="btn btn-success mb-2" onclick="showAddEditModal('corporate')"><i class="fas fa-plus"></i> Add Product</button>
+                            <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('corporate')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
+                            <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('corporate')"><i class="fas fa-download"></i> Download Template</button>
+                            <div id="cms-corporate-table"></div>
+                        </div>
+                        <div class="tab-pane fade" id="cms-td" role="tabpanel">
+                            <button class="btn btn-success mb-2" onclick="showAddEditModal('td')"><i class="fas fa-plus"></i> Add Term Deposit</button>
+                            <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('td')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
+                            <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('td')"><i class="fas fa-download"></i> Download Template</button>
+                            <div id="cms-td-table"></div>
+                        </div>
+                    </div>
+                    <input type="file" id="cmsBulkUploadInput" accept=".xlsx" class="d-none" onchange="handleBulkUpload(event)">
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- Modal for add/edit -->
+    <div class="modal fade" id="cmsAddEditModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <form id="cmsProductForm">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="cmsModalTitle">Add Product</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                    </div>
+                    <div class="modal-body" id="cmsFormFields">
+                        <!-- Dynamic form fields here -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="submit" class="btn btn-primary">Save</button>
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- ... (rest of the page) ... -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script>
+const CMS_USER = "keovoin";
+const CMS_PASSWORD = Wing@Admin123"; // Set a strong password in production
+
+// Auth logic
+document.getElementById('cmsLoginBtn').onclick = function() {
+    const u = document.getElementById('cmsUsername').value.trim();
+    const p = document.getElementById('cmsPassword').value;
+    if (u === CMS_USER && p === CMS_PASSWORD) {
+        document.getElementById('cmsAuthSection').style.display = "none";
+        document.getElementById('cmsSection').style.display = "block";
+        renderCmsTables();
+    } else {
+        alert("Unauthorized.");
+    }
+};
+
+// Table rendering and CRUD
+function renderCmsTables() {
+    ['individual','corporate','td'].forEach(type=>{
+        const tableDiv = document.getElementById(`cms-${type}-table`);
+        const dataArr = productData[type];
+        let html = '<table class="table table-bordered table-sm"><thead><tr><th>Name</th><th>Type</th><th>Segment</th><th>Actions</th></tr></thead><tbody>';
+        dataArr.forEach((row,i)=>{
+            html += `<tr>
+                <td>${row.name || ''}</td>
+                <td>${row.type || ''}</td>
+                <td>${row.segment || ''}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-1" onclick="showAddEditModal('${type}',${i})"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCmsProduct('${type}',${i})"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        tableDiv.innerHTML = html;
+    });
+}
+
+// Add/Edit modal
+function showAddEditModal(type, idx=null) {
+    const modal = new bootstrap.Modal(document.getElementById('cmsAddEditModal'));
+    let product = idx != null ? {...productData[type][idx]} : {name:'',type:'',segment:''};
+    let html = `
+        <input type="hidden" id="cmsEditIdx" value="${idx!=null ? idx : ''}">
+        <input type="hidden" id="cmsEditType" value="${type}">
+        <div class="mb-3">
+            <label class="form-label">Name</label><input class="form-control" id="cmsName" value="${product.name||''}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Type</label><input class="form-control" id="cmsType" value="${product.type||''}" required>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Segment</label><input class="form-control" id="cmsSegment" value="${product.segment||''}" required>
+        </div>
+        <!-- You can add more fields as needed! -->
+    `;
+    document.getElementById('cmsFormFields').innerHTML = html;
+    document.getElementById('cmsModalTitle').textContent = idx!=null ? 'Edit Product' : 'Add Product';
+    document.getElementById('cmsProductForm').onsubmit = function(e){
+        e.preventDefault();
+        const name = document.getElementById('cmsName').value;
+        const typeField = document.getElementById('cmsType').value;
+        const segment = document.getElementById('cmsSegment').value;
+        if(idx!=null){
+            productData[type][idx] = {name, type: typeField, segment};
+        }else{
+            productData[type].push({name, type: typeField, segment});
+        }
+        renderCmsTables();
+        modal.hide();
+    };
+    modal.show();
+}
+
+// Delete
+function deleteCmsProduct(type, idx){
+    if(confirm("Are you sure you want to delete this product?")){
+        productData[type].splice(idx,1);
+        renderCmsTables();
+    }
+}
+
+// Bulk upload/download
+function triggerBulkUpload(type){
+    document.getElementById('cmsBulkUploadInput').setAttribute('data-type',type);
+    document.getElementById('cmsBulkUploadInput').click();
+}
+function handleBulkUpload(e){
+    const file = e.target.files[0];
+    const type = e.target.getAttribute('data-type');
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(evt){
+        const workbook = new ExcelJS.Workbook();
+        await workbook.xlsx.load(evt.target.result);
+        const sheet = workbook.worksheets[0];
+        const arr = [];
+        sheet.eachRow({includeEmpty:false},(row, rowNum)=>{
+            if(rowNum===1) return; // skip header
+            arr.push({
+                name: row.getCell(1).value || '',
+                type: row.getCell(2).value || '',
+                segment: row.getCell(3).value || ''
+            });
+        });
+        productData[type] = arr;
+        renderCmsTables();
+        alert("Bulk upload successful!");
+    };
+    reader.readAsArrayBuffer(file);
+    e.target.value = '';
+}
+// Download template (minimal for demo)
+function downloadTemplate(type){
+    const workbook = new ExcelJS.Workbook();
+    const sheet = workbook.addWorksheet('Template');
+    sheet.addRow(['name','type','segment']);
+    for(const p of productData[type]) {
+        sheet.addRow([p.name,p.type,p.segment]);
+    }
+    workbook.xlsx.writeBuffer().then(buf=>{
+        saveAs(new Blob([buf]), `template_${type}.xlsx`);
+    });
+}
+</script>
