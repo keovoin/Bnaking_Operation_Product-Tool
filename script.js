@@ -14,3 +14,49 @@ async function requireAdmin() {
   if (ok) sessionStorage.setItem("auth", "ok");
   return ok;
 }
+function addRecord(ds, row) {
+  const data = loadData(ds); // your existing getter
+  data.push(row);
+  saveData(ds, data);
+}
+
+function updateRecord(ds, index, updates) {
+  const data = loadData(ds);
+  Object.assign(data[index], updates);
+  saveData(ds, data);
+}
+
+function deleteRecord(ds, index) {
+  const data = loadData(ds);
+  data.splice(index, 1);
+  saveData(ds, data);
+}
+async function handleBulkUpload(ds, file) {
+  if (!(await requireAdmin())) return;
+  const text = await file.text();
+  const lines = text.split(/\r?\n/).filter(l => l.trim());
+  const headers = lines[0].split(",");
+  const expected = schemas[ds].headers; // define once
+  const missing = expected.filter(h => !headers.includes(h));
+  if (missing.length) {
+    alert("Missing headers: " + missing.join(", "));
+    return;
+  }
+  const rows = lines.slice(1).map(line => {
+    const cols = line.split(",");
+    const obj = {};
+    headers.forEach((h, i) => obj[h] = cols[i] ?? "");
+    return obj;
+  });
+  saveData(ds, rows);
+  renderTable(ds); // reuse your existing renderer
+}
+function downloadTemplate(ds) {
+  const headers = schemas[ds].headers;
+  const csv = headers.join(",") + "\n";
+  const blob = new Blob([csv], { type: "text/csv" });
+  const a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = ds + "_Template.csv";
+  a.click();
+}
