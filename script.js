@@ -1,3 +1,4 @@
+// Sample data
 const data = {
   individual: [
     { name: 'Product A', type: 'Type 1', segment: 'Segment 1', effectiveDate: '2023-01-01' },
@@ -16,46 +17,60 @@ const data = {
 
 let currentCategory = 'individual';
 
+// Show category
 function showCategory(category) {
   currentCategory = category;
-  document.getElementById('adminSection').style.display = (category === 'admin') ? 'block' : 'none';
+  document.querySelectorAll('.tab').forEach(btn => {
+    btn.classList.toggle('active', btn.dataset.category === category);
+  });
+  document.getElementById('uploadSection').style.display = (category === 'admin') ? 'block' : 'none';
   renderTable();
 }
 
+// Render table
 function renderTable() {
   const container = document.getElementById('content');
   container.innerHTML = '';
 
   if (currentCategory === 'admin') {
-    container.innerHTML = '<p>Admin functions: upload data via the file input above.</p>';
+    container.innerHTML = '<p style="margin-top:20px;">Upload CSV file in the Admin section above.</p>';
     return;
   }
 
   const table = document.createElement('table');
-  const header = table.createTHead();
-  const headerRow = header.insertRow();
+  const thead = table.createTHead();
+  const headerRow = thead.insertRow();
 
-  const columns = ['Name', 'Type', 'Segment', 'Effective Date'];
-  columns.forEach(col => {
+  ['Name', 'Type', 'Segment', 'Effective Date', 'Actions'].forEach(text => {
     const th = document.createElement('th');
-    th.innerText = col;
+    th.innerText = text;
     headerRow.appendChild(th);
   });
 
   const tbody = document.createElement('tbody');
 
-  (data[currentCategory] || []).forEach(item => {
+  (data[currentCategory] || []).forEach((item, index) => {
     const row = tbody.insertRow();
+
     row.insertCell().innerText = item.name;
     row.insertCell().innerText = item.type;
     row.insertCell().innerText = item.segment;
     row.insertCell().innerText = item.effectiveDate;
+
+    // Actions
+    const actionsCell = row.insertCell();
+    const editBtn = document.createElement('button');
+    editBtn.innerText = 'Edit';
+    editBtn.className = 'action-btn edit-btn';
+    editBtn.onclick = () => openModal('edit', index);
+    actionsCell.appendChild(editBtn);
   });
 
   table.appendChild(tbody);
   container.appendChild(table);
 }
 
+// Filter table
 function filterTable() {
   const input = document.getElementById('searchInput').value.toLowerCase();
   const filterCategory = document.getElementById('categoryFilter').value;
@@ -74,19 +89,64 @@ function filterTable() {
   });
 }
 
+// Modal controls
+const modal = document.getElementById('modal');
+
+function openModal(mode, index = null) {
+  document.getElementById('productForm').reset();
+  document.getElementById('productIndex').value = index !== null ? index : '';
+  document.getElementById('modalTitle').innerText = mode === 'edit' ? 'Edit Product' : 'Add Product';
+
+  if (mode === 'edit' && index !== null) {
+    const item = data[currentCategory][index];
+    document.getElementById('name').value = item.name;
+    document.getElementById('type').value = item.type;
+    document.getElementById('segment').value = item.segment;
+    document.getElementById('effectiveDate').value = item.effectiveDate;
+  }
+
+  modal.style.display = 'flex';
+}
+
+function closeModal() {
+  modal.style.display = 'none';
+}
+
+// Save data from modal
+document.getElementById('productForm').addEventListener('submit', (e) => {
+  e.preventDefault();
+  const index = document.getElementById('productIndex').value;
+  const newItem = {
+    name: document.getElementById('name').value,
+    type: document.getElementById('type').value,
+    segment: document.getElementById('segment').value,
+    effectiveDate: document.getElementById('effectiveDate').value
+  };
+
+  if (index === '') {
+    // Add new
+    data[currentCategory].push(newItem);
+  } else {
+    // Edit existing
+    data[currentCategory][index] = newItem;
+  }
+  closeModal();
+  renderTable();
+});
+
+// Upload CSV
 function uploadData() {
   const fileInput = document.getElementById('uploadFile');
   const file = fileInput.files[0];
   if (!file) {
-    alert('Please select a file to upload.');
+    alert('Please select a CSV file.');
     return;
   }
 
   const reader = new FileReader();
   reader.onload = function(e) {
-    const dataStr = e.target.result;
-    // For simplicity, assume CSV format
-    const lines = dataStr.split('\n');
+    const text = e.target.result;
+    const lines = text.trim().split('\n');
     lines.forEach(line => {
       const [name, type, segment, effectiveDate] = line.split(',');
       if (name && type && segment && effectiveDate) {
