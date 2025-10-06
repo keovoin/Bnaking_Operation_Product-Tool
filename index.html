@@ -3,40 +3,75 @@
 <head>
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-<title>Internal Product Tool</title>
+<title>Product Management Internal Tool</title>
 <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
 
-<!-- Navigation Tabs -->
-<div id="tabs">
-  <button onclick="showCategory('individual')">Individual Products</button>
-  <button onclick="showCategory('corporate')">Corporate Product</button>
-  <button onclick="showCategory('td')">TD</button>
-  <button onclick="showCategory('extra')">Extra</button>
-  <button onclick="showCategory('admin')">Admin</button>
-</div>
+<header>
+  <h1>Product Management Dashboard</h1>
+</header>
 
-<!-- Search and Filter -->
-<div id="searchContainer">
-  <input type="text" id="searchInput" placeholder="Search..." oninput="filterTable()" />
+<!-- Navigation Tabs -->
+<nav>
+  <button class="tab active" data-category="individual" onclick="showCategory('individual')">Individual Products</button>
+  <button class="tab" data-category="corporate" onclick="showCategory('corporate')">Corporate Products</button>
+  <button class="tab" data-category="td" onclick="showCategory('td')">TD</button>
+  <button class="tab" data-category="extra" onclick="showCategory('extra')">Extra</button>
+  <button class="tab" data-category="admin" onclick="showCategory('admin')">Admin</button>
+</nav>
+
+<!-- Search & Filter -->
+<div class="search-filter">
+  <input type="text" id="searchInput" placeholder="Search by name or segment..." oninput="filterTable()" />
   <select id="categoryFilter" onchange="filterTable()">
     <option value="">All Categories</option>
     <option value="individual">Individual Products</option>
-    <option value="corporate">Corporate Product</option>
+    <option value="corporate">Corporate Products</option>
     <option value="td">TD</option>
     <option value="extra">Extra</option>
   </select>
 </div>
 
-<!-- Data Display -->
+<!-- Content Area -->
 <div id="content"></div>
 
-<!-- Admin Upload -->
-<div id="adminSection" style="display:none; margin-top:20px;">
-  <h3>Admin Functions</h3>
-  <input type="file" id="uploadFile" />
-  <button onclick="uploadData()">Upload Data</button>
+<!-- Modal for Add/Edit -->
+<div id="modal" class="modal">
+  <div class="modal-content">
+    <span class="close" onclick="closeModal()">&times;</span>
+    <h2 id="modalTitle">Edit Product</h2>
+    <form id="productForm">
+      <input type="hidden" id="productIndex" />
+      <div class="form-group">
+        <label>Name:</label>
+        <input type="text" id="name" required />
+      </div>
+      <div class="form-group">
+        <label>Type:</label>
+        <input type="text" id="type" required />
+      </div>
+      <div class="form-group">
+        <label>Segment:</label>
+        <input type="text" id="segment" required />
+      </div>
+      <div class="form-group">
+        <label>Effective Date:</label>
+        <input type="date" id="effectiveDate" required />
+      </div>
+      <div class="form-actions">
+        <button type="submit">Save</button>
+        <button type="button" onclick="closeModal()">Cancel</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<!-- Upload Section (Admin) -->
+<div id="uploadSection" class="upload-section" style="display:none;">
+  <h3>Bulk Upload (CSV)</h3>
+  <input type="file" id="uploadFile" accept=".csv" />
+  <button onclick="uploadData()">Upload</button>
 </div>
 
 <script src="script.js"></script>
