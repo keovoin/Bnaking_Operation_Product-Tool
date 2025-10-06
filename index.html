@@ -9,620 +9,694 @@
     <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
     <style>
-        :root {
-            --primary-color: #1a4f8e;
-            --secondary-color: #3498db;
-            --accent-color: #f8f9fa;
-            --text-color: #333;
-            --border-color: #dee2e6;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f5f7fa;
-            color: var(--text-color);
-            padding-top: 20px;
-        }
-        .header {
-            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
-            color: white;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
-        }
-        .nav-tabs {
-            background-color: white;
-            border-radius: 8px;
-            overflow: hidden;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .nav-tabs .nav-link {
-            font-weight: 600;
-            padding: 15px 20px;
-            color: var(--text-color);
-            border: none;
-        }
-        .nav-tabs .nav-link.active {
-            background-color: var(--primary-color);
-            color: white;
-            border: none;
-        }
-        .search-container {
-            background-color: white;
-            border-radius: 8px;
-            padding: 20px;
-            margin-bottom: 20px;
-            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-        .search-box {
-            position: relative;
-        }
-        .search-box input {
-            padding-left: 40px;
-            border-radius: 25px;
-        }
-        .search-box i {
-            position: absolute;
-            left: 15px;
-            top: 12px;
-            color: #6c757d;
-        }
-        .card {
-            border: none;
-            border-radius: 10px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-            margin-bottom: 20px;
-            transition: transform 0.3s ease;
-        }
-        .card:hover {
-            transform: translateY(-5px);
-        }
-        .card-header {
-            background-color: var(--primary-color);
-            color: white;
-            border-radius: 10px 10px 0 0 !important;
-            font-weight: 600;
-        }
-        .info-table {
-            width: 100%;
-            margin-bottom: 0;
-        }
-        .info-table th {
-            width: 30%;
-            background-color: var(--accent-color);
-        }
-        .tab-content {
-            padding: 20px 0;
-        }
-        .product-list {
-            max-height: 300px;
-            overflow-y: auto;
-        }
-        .list-group-item {
-            border-left: none;
-            border-right: none;
-            cursor: pointer;
-            transition: background-color 0.2s;
-        }
-        .list-group-item:hover {
-            background-color: var(--accent-color);
-        }
-        .highlight {
-            background-color: #fff8e1;
-            padding: 2px 4px;
-            border-radius: 3px;
-        }
-        .section-title {
-            border-bottom: 2px solid var(--secondary-color);
-            padding-bottom: 8px;
-            margin: 25px 0 15px;
-            color: var(--primary-color);
-        }
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 30px;
-            color: #6c757d;
-            font-size: 0.9rem;
-        }
-        .upload-area {
-            border: 2px dashed #ccc;
-            border-radius: 10px;
-            padding: 25px;
-            text-align: center;
-            margin: 20px 0;
-            background-color: #f8f9fa;
-            transition: all 0.3s;
-        }
-        .upload-area:hover {
-            border-color: var(--secondary-color);
-            background-color: #e8f4ff;
-        }
-        .upload-icon {
-            font-size: 3rem;
-            color: var(--secondary-color);
-            margin-bottom: 15px;
-        }
-        .password-prompt {
-            background-color: #f8f9fa;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-        }
-        @media (max-width: 768px) {
-            .info-table th {
-                width: 40%;
-            }
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f5f7fa; color: #333; }
+        .header { background: linear-gradient(135deg, #1a4f8e, #3498db); color: white; border-radius: 10px; padding: 20px; margin-bottom: 25px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); }
+        .nav-tabs { background-color: white; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .nav-tabs .nav-link { font-weight: 600; padding: 15px 20px; color: #333; border: none; }
+        .nav-tabs .nav-link.active { background-color: #1a4f8e; color: white; border: none; }
+        .search-container { background-color: white; border-radius: 8px; padding: 20px; margin-bottom: 20px; box-shadow: 0 2px 8px rgba(0,0,0,0.1); }
+        .search-box { position: relative; }
+        .search-box input { padding-left: 40px; border-radius: 25px; }
+        .search-box i { position: absolute; left: 15px; top: 12px; color: #6c757d; }
+        .card { border: none; border-radius: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.05); margin-bottom: 20px; transition: transform 0.3s ease; }
+        .card:hover { transform: translateY(-5px);}
+        .card-header { background-color: #1a4f8e; color: white; border-radius: 10px 10px 0 0 !important; font-weight: 600; }
+        .info-table { width: 100%; margin-bottom: 0; }
+        .info-table th { width: 30%; background-color: #f8f9fa; }
+        .tab-content { padding: 20px 0; }
+        .product-list { max-height: 300px; overflow-y: auto; }
+        .list-group-item { border-left: none; border-right: none; cursor: pointer; transition: background-color 0.2s; }
+        .list-group-item:hover { background-color: #f8f9fa; }
+        .highlight { background-color: #fff8e1; padding: 2px 4px; border-radius: 3px; }
+        .section-title { border-bottom: 2px solid #3498db; padding-bottom: 8px; margin: 25px 0 15px; color: #1a4f8e; }
+        footer { text-align: center; padding: 20px; margin-top: 30px; color: #6c757d; font-size: 0.9rem; }
+        .cms-table th, .cms-table td { vertical-align: middle; }
+        .cms-table input, .cms-table select { min-width: 60px; }
+        .cms-mini-btn { padding: 0 7px; font-size: 1rem; }
+        .modal-dialog-scrollable .modal-content { max-height: 95vh; overflow-y: auto; }
+        @media (max-width: 768px) { .info-table th { width: 40%; } }
     </style>
 </head>
 <body>
-    <div class="container">
-        <div class="header text-center">
-            <h1><i class="fas fa-landmark me-2"></i>Banking Product Information Portal</h1>
-            <p class="lead">Access detailed information about all banking products</p>
-        </div>
-        <ul class="nav nav-tabs nav-justified" id="productTabs" role="tablist">
-            <li class="nav-item" role="presentation">
-                <button class="nav-link active" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab" aria-controls="individual" aria-selected="true">
-                    <i class="fas fa-user me-2"></i>Individual Products
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="corporate-tab" data-bs-toggle="tab" data-bs-target="#corporate" type="button" role="tab" aria-controls="corporate" aria-selected="false">
-                    <i class="fas fa-building me-2"></i>Corporate Products
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="td-tab" data-bs-toggle="tab" data-bs-target="#td" type="button" role="tab" aria-controls="td" aria-selected="false">
-                    <i class="fas fa-chart-line me-2"></i>Term Deposits
-                </button>
-            </li>
-            <li class="nav-item" role="presentation">
-                <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="false">
-                    <i class="fas fa-file-upload me-2"></i>Update Data
-                </button>
-            </li>
-        </ul>
-        <div class="tab-content" id="productTabsContent">
-            <!-- Individual Products Tab -->
-            <div class="tab-pane fade show active" id="individual" role="tabpanel" aria-labelledby="individual-tab">
-                <div class="search-container">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="individualSearch" class="form-control" placeholder="Search individual products...">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <select id="individualFilter" class="form-select">
-                                <option value="">All Segments</option>
-                                <option value="General Individual Customer">General Individual Customer</option>
-                                <option value="Business Gold">Business Gold</option>
-                                <option value="Personal Elite">Personal Elite</option>
-                                <option value="Payroll">Payroll</option>
-                                <option value="Personal Premier">Personal Premier</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">Individual Products</div>
-                            <div class="product-list list-group list-group-flush" id="individualProductsList">
-                                <!-- Products will be populated by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div id="individualProductDetail">
-                            <div class="card">
-                                <div class="card-body text-center p-5">
-                                    <i class="fas fa-search fa-3x mb-3 text-muted"></i>
-                                    <h5>Select a product to view details</h5>
-                                    <p class="text-muted">Choose a product from the list to see comprehensive information</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Corporate Products Tab -->
-            <div class="tab-pane fade" id="corporate" role="tabpanel" aria-labelledby="corporate-tab">
-                <div class="search-container">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="corporateSearch" class="form-control" placeholder="Search corporate products...">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <select id="corporateFilter" class="form-select">
-                                <option value="">All Segments</option>
-                                <option value="Corporate/Company">Corporate/Company</option>
-                                <option value="Government">Government</option>
-                                <option value="MFI">MFI</option>
-                                <option value="Company/Business platinum">Company/Business platinum</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">Corporate Products</div>
-                            <div class="product-list list-group list-group-flush" id="corporateProductsList">
-                                <!-- Products will be populated by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div id="corporateProductDetail">
-                            <div class="card">
-                                <div class="card-body text-center p-5">
-                                    <i class="fas fa-search fa-3x mb-3 text-muted"></i>
-                                    <h5>Select a product to view details</h5>
-                                    <p class="text-muted">Choose a product from the list to see comprehensive information</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- Term Deposits Tab -->
-            <div class="tab-pane fade" id="td" role="tabpanel" aria-labelledby="td-tab">
-                <div class="search-container">
-                    <div class="row">
-                        <div class="col-md-6">
-                            <div class="search-box">
-                                <i class="fas fa-search"></i>
-                                <input type="text" id="tdSearch" class="form-control" placeholder="Search term deposits...">
-                            </div>
-                        </div>
-                        <div class="col-md-6">
-                            <select id="tdFilter" class="form-select">
-                                <option value="">All Segments</option>
-                                <option value="General Customer">General Customer</option>
-                                <option value="MFI BILL PAY">MFI BILL PAY</option>
-                                <option value="FI (TREASURY)">FI (TREASURY)</option>
-                                <option value="Wing and RGC Staffs">Wing and RGC Staffs</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="col-md-4">
-                        <div class="card">
-                            <div class="card-header">Term Deposit Products</div>
-                            <div class="product-list list-group list-group-flush" id="tdProductsList">
-                                <!-- Products will be populated by JavaScript -->
-                            </div>
-                        </div>
-                    </div>
-                    <div class="col-md-8">
-                        <div id="tdProductDetail">
-                            <div class="card">
-                                <div class="card-body text-center p-5">
-                                    <i class="fas fa-search fa-3x mb-3 text-muted"></i>
-                                    <h5>Select a product to view details</h5>
-                                    <p class="text-muted">Choose a product from the list to see comprehensive information</p>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            <!-- CMS Tab -->
-            <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
-                <div class="row">
-                    <div class="col-md-12">
-                        <div class="card my-3">
-                            <div class="card-header">Product Data Management (CMS)</div>
-                            <div class="card-body" id="cmsAuthSection">
-                                <div id="cmsLoginForm">
-                                    <h5 class="section-title">Login Required</h5>
-                                    <p>Only authorized user can access this section.</p>
-                                    <div class="mb-3">
-                                        <label for="cmsUsername" class="form-label">Username</label>
-                                        <input type="text" class="form-control" id="cmsUsername" placeholder="Username">
-                                    </div>
-                                    <div class="mb-3">
-                                        <label for="cmsPassword" class="form-label">Password</label>
-                                        <input type="password" class="form-control" id="cmsPassword" placeholder="Password">
-                                    </div>
-                                    <button class="btn btn-primary" id="cmsLoginBtn">Login</button>
-                                </div>
-                            </div>
-                            <div class="card-body" id="cmsSection" style="display:none;">
-                                <ul class="nav nav-pills mb-3" id="cmsTabs" role="tablist">
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link active" id="cms-individual-tab" data-bs-toggle="pill" data-bs-target="#cms-individual" type="button" role="tab">Individual</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="cms-corporate-tab" data-bs-toggle="pill" data-bs-target="#cms-corporate" type="button" role="tab">Corporate</button>
-                                    </li>
-                                    <li class="nav-item" role="presentation">
-                                        <button class="nav-link" id="cms-td-tab" data-bs-toggle="pill" data-bs-target="#cms-td" type="button" role="tab">Term Deposits</button>
-                                    </li>
-                                </ul>
-                                <div class="tab-content" id="cmsTabsContent">
-                                    <div class="tab-pane fade show active" id="cms-individual" role="tabpanel">
-                                        <button class="btn btn-success mb-2" onclick="showAddEditModal('individual')"><i class="fas fa-plus"></i> Add Product</button>
-                                        <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('individual')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
-                                        <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('individual')"><i class="fas fa-download"></i> Download Template</button>
-                                        <div id="cms-individual-table"></div>
-                                    </div>
-                                    <div class="tab-pane fade" id="cms-corporate" role="tabpanel">
-                                        <button class="btn btn-success mb-2" onclick="showAddEditModal('corporate')"><i class="fas fa-plus"></i> Add Product</button>
-                                        <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('corporate')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
-                                        <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('corporate')"><i class="fas fa-download"></i> Download Template</button>
-                                        <div id="cms-corporate-table"></div>
-                                    </div>
-                                    <div class="tab-pane fade" id="cms-td" role="tabpanel">
-                                        <button class="btn btn-success mb-2" onclick="showAddEditModal('td')"><i class="fas fa-plus"></i> Add Term Deposit</button>
-                                        <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('td')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
-                                        <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('td')"><i class="fas fa-download"></i> Download Template</button>
-                                        <div id="cms-td-table"></div>
-                                    </div>
-                                </div>
-                                <input type="file" id="cmsBulkUploadInput" accept=".xlsx" class="d-none" onchange="handleBulkUpload(event)">
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                <div class="modal fade" id="cmsAddEditModal" tabindex="-1">
-                    <div class="modal-dialog modal-lg">
-                        <div class="modal-content">
-                            <form id="cmsProductForm">
-                                <div class="modal-header">
-                                    <h5 class="modal-title" id="cmsModalTitle">Add Product</h5>
-                                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                </div>
-                                <div class="modal-body" id="cmsFormFields">
-                                    <!-- Dynamic form fields here -->
-                                </div>
-                                <div class="modal-footer">
-                                    <button type="submit" class="btn btn-primary">Save</button>
-                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                                </div>
-                            </form>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-        <footer>
-            <p>Banking Product Information Portal &copy; 2023 | Designed for SharePoint Integration</p>
-        </footer>
+<div class="container">
+    <div class="header text-center">
+        <h1><i class="fas fa-landmark me-2"></i>Banking Product Information Portal</h1>
+        <p class="lead">Access detailed information about all banking products</p>
     </div>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
-    <script>
-    // Sample product data for demo purposes
-    let productData = {
-        individual: [
-            {name:"Saving Account-Migrant Worker Digital KCY",type:"Saving",segment:"General Individual Customer"},
-            {name:"Saving Account-Digital Wac Light",type:"Saving",segment:"General Individual Customer"},
-            {name:"Saving Account-HIGH YIELD SAVING BUSINESS GOLD-GrowHigh",type:"Saving",segment:"General Individual Customer/Business Gold"}
-        ],
-        corporate: [
-            {name:"Current Account - Corporate",type:"Current",segment:"Corporate/Company"}
-        ],
-        td: [
-            {name:"Term Deposit",type:"TD",segment:"General Customer, VIP, Payroll, Government, SME, Corporate"},
-            {name:"Term Deposit - MFI BILL PAY TERM DEPOSIT",type:"TD",segment:"MFI BILL PAY"},
-            {name:"Term Deposit - FI (TREASURY) TERM DEPOSIT",type:"TD",segment:"FI (TREASURY)"},
-            {name:"Term Deposit - WING & RGC STAFFS",type:"TD",segment:"All Wing and All RGC Staffs"}
-        ]
-    };
-
-    // Tabs: Individual/Corporate/TD display logic
-    function populateProductList(type, products) {
-        const listElement = document.getElementById(`${type}ProductsList`);
-        listElement.innerHTML = '';
-        if (products.length === 0) {
-            listElement.innerHTML = '<div class="list-group-item text-muted">No products found</div>';
-            return;
-        }
-        products.forEach(product => {
-            const item = document.createElement('button');
-            item.type = 'button';
-            item.className = 'list-group-item list-group-item-action';
-            item.textContent = product.name;
-            item.addEventListener('click', () => showProductDetails(type, product));
-            listElement.appendChild(item);
-        });
-    }
-    function setupSearch(type) {
-        const searchInput = document.getElementById(`${type}Search`);
-        searchInput.addEventListener('input', () => filterProducts(type));
-    }
-    function setupFilter(type) {
-        const filterSelect = document.getElementById(`${type}Filter`);
-        filterSelect.addEventListener('change', () => filterProducts(type));
-    }
-    function filterProducts(type) {
-        const searchText = document.getElementById(`${type}Search`).value.toLowerCase();
-        const filterValue = document.getElementById(`${type}Filter`).value;
-        const products = productData[type];
-        const filteredProducts = products.filter(product => {
-            const matchesSearch = product.name.toLowerCase().includes(searchText);
-            const matchesFilter = filterValue === '' || product.segment.includes(filterValue);
-            return matchesSearch && matchesFilter;
-        });
-        populateProductList(type, filteredProducts);
-        if (filteredProducts.length === 0) {
-            document.getElementById(`${type}ProductDetail`).innerHTML = `
-                <div class="card">
-                    <div class="card-body text-center p-5">
-                        <i class="fas fa-exclamation-circle fa-3x mb-3 text-muted"></i>
-                        <h5>No products found</h5>
-                        <p class="text-muted">Try adjusting your search or filter criteria</p>
+    <ul class="nav nav-tabs nav-justified" id="productTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active" id="individual-tab" data-bs-toggle="tab" data-bs-target="#individual" type="button" role="tab" aria-controls="individual" aria-selected="true">
+                <i class="fas fa-user me-2"></i>Individual Products
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="corporate-tab" data-bs-toggle="tab" data-bs-target="#corporate" type="button" role="tab" aria-controls="corporate" aria-selected="false">
+                <i class="fas fa-building me-2"></i>Corporate Products
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="td-tab" data-bs-toggle="tab" data-bs-target="#td" type="button" role="tab" aria-controls="td" aria-selected="false">
+                <i class="fas fa-chart-line me-2"></i>Term Deposits
+            </button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link" id="upload-tab" data-bs-toggle="tab" data-bs-target="#upload" type="button" role="tab" aria-controls="upload" aria-selected="false">
+                <i class="fas fa-file-upload me-2"></i>Update Data
+            </button>
+        </li>
+    </ul>
+    <div class="tab-content" id="productTabsContent">
+        <!-- Individual Products Tab -->
+        <div class="tab-pane fade show active" id="individual" role="tabpanel" aria-labelledby="individual-tab">
+            <div class="search-container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="individualSearch" class="form-control" placeholder="Search individual products...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="individualFilter" class="form-select">
+                            <option value="">All Segments</option>
+                            <option value="General Individual Customer">General Individual Customer</option>
+                            <option value="Business Gold">Business Gold</option>
+                            <option value="Personal Elite">Personal Elite</option>
+                            <option value="Payroll">Payroll</option>
+                            <option value="Personal Premier">Personal Premier</option>
+                        </select>
                     </div>
                 </div>
-            `;
-        }
-    }
-    function showProductDetails(type, product) {
-        const detailElement = document.getElementById(`${type}ProductDetail`);
-        // Simplified for demo; Add more detail fields as needed
-        detailElement.innerHTML = `
-            <div class="card">
-                <div class="card-header">${product.name}</div>
-                <div class="card-body">
-                    <h5 class="section-title">Product Information</h5>
-                    <table class="table info-table table-striped">
-                        <tr><th>Product Type</th><td>${product.type}</td></tr>
-                        <tr><th>Segment</th><td>${product.segment}</td></tr>
-                    </table>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Individual Products</div>
+                        <div class="product-list list-group list-group-flush" id="individualProductsList"></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div id="individualProductDetail">
+                        <div class="card">
+                            <div class="card-body text-center p-5">
+                                <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                                <h5>Select a product to view details</h5>
+                                <p class="text-muted">Choose a product from the list to see comprehensive information</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </div>
-        `;
+        </div>
+        <!-- Corporate Products Tab -->
+        <div class="tab-pane fade" id="corporate" role="tabpanel" aria-labelledby="corporate-tab">
+            <div class="search-container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="corporateSearch" class="form-control" placeholder="Search corporate products...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="corporateFilter" class="form-select">
+                            <option value="">All Segments</option>
+                            <option value="Corporate/Company">Corporate/Company</option>
+                            <option value="Government">Government</option>
+                            <option value="MFI">MFI</option>
+                            <option value="Company/Business platinum">Company/Business platinum</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Corporate Products</div>
+                        <div class="product-list list-group list-group-flush" id="corporateProductsList"></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div id="corporateProductDetail">
+                        <div class="card">
+                            <div class="card-body text-center p-5">
+                                <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                                <h5>Select a product to view details</h5>
+                                <p class="text-muted">Choose a product from the list to see comprehensive information</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Term Deposits Tab -->
+        <div class="tab-pane fade" id="td" role="tabpanel" aria-labelledby="td-tab">
+            <div class="search-container">
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="search-box">
+                            <i class="fas fa-search"></i>
+                            <input type="text" id="tdSearch" class="form-control" placeholder="Search term deposits...">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <select id="tdFilter" class="form-select">
+                            <option value="">All Segments</option>
+                            <option value="General Customer">General Customer</option>
+                            <option value="MFI BILL PAY">MFI BILL PAY</option>
+                            <option value="FI (TREASURY)">FI (TREASURY)</option>
+                            <option value="Wing and RGC Staffs">Wing and RGC Staffs</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="card">
+                        <div class="card-header">Term Deposit Products</div>
+                        <div class="product-list list-group list-group-flush" id="tdProductsList"></div>
+                    </div>
+                </div>
+                <div class="col-md-8">
+                    <div id="tdProductDetail">
+                        <div class="card">
+                            <div class="card-body text-center p-5">
+                                <i class="fas fa-search fa-3x mb-3 text-muted"></i>
+                                <h5>Select a product to view details</h5>
+                                <p class="text-muted">Choose a product from the list to see comprehensive information</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- CMS Tab -->
+        <div class="tab-pane fade" id="upload" role="tabpanel" aria-labelledby="upload-tab">
+            <div class="row">
+                <div class="col-md-12">
+                    <div class="card my-3">
+                        <div class="card-header">Product Data Management (CMS)</div>
+                        <div class="card-body" id="cmsAuthSection">
+                            <div id="cmsLoginForm">
+                                <h5 class="section-title">Login Required</h5>
+                                <p>Only authorized user can access this section.</p>
+                                <div class="mb-3">
+                                    <label for="cmsUsername" class="form-label">Username</label>
+                                    <input type="text" class="form-control" id="cmsUsername" placeholder="Username">
+                                </div>
+                                <div class="mb-3">
+                                    <label for="cmsPassword" class="form-label">Password</label>
+                                    <input type="password" class="form-control" id="cmsPassword" placeholder="Password">
+                                </div>
+                                <button class="btn btn-primary" id="cmsLoginBtn">Login</button>
+                            </div>
+                        </div>
+                        <div class="card-body" id="cmsSection" style="display:none;">
+                            <ul class="nav nav-pills mb-3" id="cmsTabs" role="tablist">
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link active" id="cms-individual-tab" data-bs-toggle="pill" data-bs-target="#cms-individual" type="button" role="tab">Individual</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="cms-corporate-tab" data-bs-toggle="pill" data-bs-target="#cms-corporate" type="button" role="tab">Corporate</button>
+                                </li>
+                                <li class="nav-item" role="presentation">
+                                    <button class="nav-link" id="cms-td-tab" data-bs-toggle="pill" data-bs-target="#cms-td" type="button" role="tab">Term Deposits</button>
+                                </li>
+                            </ul>
+                            <div class="tab-content" id="cmsTabsContent">
+                                <div class="tab-pane fade show active" id="cms-individual" role="tabpanel">
+                                    <button class="btn btn-success mb-2" onclick="showCmsProductModal('individual')"><i class="fas fa-plus"></i> Add Product</button>
+                                    <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('individual')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
+                                    <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('individual')"><i class="fas fa-download"></i> Download Template</button>
+                                    <div id="cms-individual-table"></div>
+                                </div>
+                                <div class="tab-pane fade" id="cms-corporate" role="tabpanel">
+                                    <button class="btn btn-success mb-2" onclick="showCmsProductModal('corporate')"><i class="fas fa-plus"></i> Add Product</button>
+                                    <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('corporate')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
+                                    <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('corporate')"><i class="fas fa-download"></i> Download Template</button>
+                                    <div id="cms-corporate-table"></div>
+                                </div>
+                                <div class="tab-pane fade" id="cms-td" role="tabpanel">
+                                    <button class="btn btn-success mb-2" onclick="showCmsProductModal('td')"><i class="fas fa-plus"></i> Add Term Deposit</button>
+                                    <button class="btn btn-secondary mb-2 ms-2" onclick="triggerBulkUpload('td')"><i class="fas fa-file-upload"></i> Bulk Upload</button>
+                                    <button class="btn btn-outline-primary mb-2 ms-2" onclick="downloadTemplate('td')"><i class="fas fa-download"></i> Download Template</button>
+                                    <div id="cms-td-table"></div>
+                                </div>
+                            </div>
+                            <input type="file" id="cmsBulkUploadInput" accept=".xlsx" class="d-none" onchange="handleBulkUpload(event)">
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <!-- Modal for add/edit -->
+            <div class="modal fade" id="cmsAddEditModal" tabindex="-1">
+                <div class="modal-dialog modal-xl modal-dialog-scrollable">
+                    <div class="modal-content">
+                        <form id="cmsProductForm" autocomplete="off">
+                            <div class="modal-header">
+                                <h5 class="modal-title" id="cmsModalTitle">Add Product</h5>
+                                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                            </div>
+                            <div class="modal-body" id="cmsFormFields">
+                                <!-- Dynamic form fields here -->
+                            </div>
+                            <div class="modal-footer">
+                                <button type="submit" class="btn btn-primary">Save</button>
+                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <footer>
+        <p>Banking Product Information Portal &copy; 2023 | Designed for SharePoint Integration</p>
+    </footer>
+</div>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/exceljs@4.3.0/dist/exceljs.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/js/all.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+<script>
+// =========== DATA STRUCTURE ===========
+let productData = {
+    individual: [
+        {
+            name:"Saving Account-Migrant Worker Digital KCY",
+            type:"Saving",
+            segment:"General Individual Customer",
+            effectiveDate:"2025-01-11",
+            fees:[
+                {name:"Monthly Account Services",amount:"0",currency:"USD",frequency:"Monthly",conditions:"Free of charge"},
+                {name:"Passbook",amount:"5",currency:"USD",frequency:"-",conditions:"Lost/damaged: 5 USD"}
+            ],
+            limits:[
+                {channel:"Send Money To WING",limitType:"PerTransaction",amount:"100000.0",currency:"USD",conditions:"Mobile App Limitation",taxStatus:"14% for Non-resident, 4% for resident"},
+            ],
+            tiers:[
+                {tier:"1",operator:">=",value:"5000",currency:"USD",rate:"3%",payout:"Monthly",conditions:"USD EOD >= 5,000",depositCondition:"",withdrawCondition:"",earlyClosure:"",minBalance:""}
+            ]
+        }
+    ],
+    corporate: [],
+    td: []
+};
+
+// =========== PRODUCT VIEWER ===========
+function populateProductList(type, products) {
+    const listElement = document.getElementById(`${type}ProductsList`);
+    listElement.innerHTML = '';
+    if (products.length === 0) {
+        listElement.innerHTML = '<div class="list-group-item text-muted">No products found</div>';
+        return;
     }
-    // Initialize
-    document.addEventListener('DOMContentLoaded', function() {
-        populateProductList('individual', productData.individual);
-        populateProductList('corporate', productData.corporate);
-        populateProductList('td', productData.td);
-        setupSearch('individual');
-        setupSearch('corporate');
-        setupSearch('td');
-        setupFilter('individual');
-        setupFilter('corporate');
-        setupFilter('td');
+    products.forEach((product, idx) => {
+        const item = document.createElement('button');
+        item.type = 'button';
+        item.className = 'list-group-item list-group-item-action';
+        item.textContent = product.name;
+        item.addEventListener('click', () => showProductDetails(type, product));
+        listElement.appendChild(item);
     });
+}
+function setupSearch(type) {
+    document.getElementById(`${type}Search`).addEventListener('input', () => filterProducts(type));
+}
+function setupFilter(type) {
+    document.getElementById(`${type}Filter`).addEventListener('change', () => filterProducts(type));
+}
+function filterProducts(type) {
+    const searchText = document.getElementById(`${type}Search`).value.toLowerCase();
+    const filterValue = document.getElementById(`${type}Filter`).value;
+    const products = productData[type];
+    const filteredProducts = products.filter(product => {
+        const matchesSearch = (product.name||"").toLowerCase().includes(searchText);
+        const matchesFilter = filterValue === '' || (product.segment||"").includes(filterValue);
+        return matchesSearch && matchesFilter;
+    });
+    populateProductList(type, filteredProducts);
+    if (filteredProducts.length === 0) {
+        document.getElementById(`${type}ProductDetail`).innerHTML = `
+            <div class="card"><div class="card-body text-center p-5">
+                <i class="fas fa-exclamation-circle fa-3x mb-3 text-muted"></i>
+                <h5>No products found</h5>
+                <p class="text-muted">Try adjusting your search or filter criteria</p>
+            </div></div>`;
+    }
+}
+function showProductDetails(type, product) {
+    const el = document.getElementById(`${type}ProductDetail`);
+    el.innerHTML = `
+        <div class="card">
+            <div class="card-header">${product.name||''}</div>
+            <div class="card-body">
+                <h5 class="section-title">Product Information</h5>
+                <table class="table info-table table-striped">
+                    <tr><th>Product Type</th><td>${product.type||''}</td></tr>
+                    <tr><th>Segment</th><td>${product.segment||''}</td></tr>
+                    <tr><th>Effective Date</th><td>${product.effectiveDate||''}</td></tr>
+                </table>
+                <h5 class="section-title">Fees</h5>
+                ${product.fees && product.fees.length ? `
+                <div class="table-responsive"><table class="table table-bordered">
+                    <thead><tr>
+                        <th>Fee Name</th><th>Amount</th><th>Currency</th><th>Frequency</th><th>Conditions</th>
+                    </tr></thead>
+                    <tbody>
+                        ${product.fees.map(fee=>`
+                            <tr>
+                                <td>${fee.name||''}</td><td>${fee.amount||''}</td><td>${fee.currency||''}</td>
+                                <td>${fee.frequency||''}</td><td>${fee.conditions||''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table></div>` : "<i>No data</i>" }
+                <h5 class="section-title">Transaction Limits</h5>
+                ${product.limits && product.limits.length ? `
+                <div class="table-responsive"><table class="table table-bordered">
+                    <thead><tr>
+                        <th>Channel</th><th>Limit Type</th><th>Amount</th><th>Currency</th><th>Conditions</th><th>Tax Status</th>
+                    </tr></thead>
+                    <tbody>
+                        ${product.limits.map(l=>`
+                            <tr>
+                                <td>${l.channel||''}</td><td>${l.limitType||''}</td><td>${l.amount||''}</td>
+                                <td>${l.currency||''}</td><td>${l.conditions||''}</td><td>${l.taxStatus||''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table></div>` : "<i>No data</i>" }
+                <h5 class="section-title">Interest Tiers</h5>
+                ${product.tiers && product.tiers.length ? `
+                <div class="table-responsive"><table class="table table-bordered">
+                    <thead><tr>
+                        <th>Tier</th><th>Operator</th><th>Value</th><th>Currency</th>
+                        <th>Rate</th><th>Payout Frequency</th><th>Conditions</th>
+                        <th>Deposit Condition</th><th>Withdrawal Condition</th>
+                        <th>Early Closure</th><th>Minimum Balance</th>
+                    </tr></thead>
+                    <tbody>
+                        ${product.tiers.map(tier=>`
+                            <tr>
+                                <td>${tier.tier||''}</td><td>${tier.operator||''}</td><td>${tier.value||''}</td><td>${tier.currency||''}</td>
+                                <td>${tier.rate||''}</td><td>${tier.payout||''}</td><td>${tier.conditions||''}</td>
+                                <td>${tier.depositCondition||''}</td><td>${tier.withdrawCondition||''}</td>
+                                <td>${tier.earlyClosure||''}</td><td>${tier.minBalance||''}</td>
+                            </tr>
+                        `).join('')}
+                    </tbody>
+                </table></div>` : "<i>No data</i>" }
+            </div>
+        </div>
+    `;
+}
+document.addEventListener('DOMContentLoaded', function() {
+    populateProductList('individual', productData.individual);
+    populateProductList('corporate', productData.corporate);
+    populateProductList('td', productData.td);
+    setupSearch('individual'); setupSearch('corporate'); setupSearch('td');
+    setupFilter('individual'); setupFilter('corporate'); setupFilter('td');
+});
 
-    // ========== CMS CODE ==========
-
-    const CMS_USER = "keovoin";
-    const CMS_PASSWORD = "Wing@Admin123"; // Set a strong password in production
-
-    // Auth logic
-    document.getElementById('cmsLoginBtn').onclick = function() {
-        const u = document.getElementById('cmsUsername').value.trim();
-        const p = document.getElementById('cmsPassword').value;
-        if (u === CMS_USER && p === CMS_PASSWORD) {
-            document.getElementById('cmsAuthSection').style.display = "none";
-            document.getElementById('cmsSection').style.display = "block";
-            renderCmsTables();
-        } else {
-            alert("Unauthorized.");
-        }
+// =========== CMS UI ===========
+const CMS_USER = "keovoin";
+const CMS_PASSWORD = "Wing@Admin123";
+document.getElementById('cmsLoginBtn').onclick = function() {
+    const u = document.getElementById('cmsUsername').value.trim();
+    const p = document.getElementById('cmsPassword').value;
+    if (u === CMS_USER && p === CMS_PASSWORD) {
+        document.getElementById('cmsAuthSection').style.display = "none";
+        document.getElementById('cmsSection').style.display = "block";
+        renderCmsTables();
+    } else {
+        alert("Unauthorized.");
+    }
+};
+function renderCmsTables() {
+    ['individual','corporate','td'].forEach(type=>{
+        const tableDiv = document.getElementById(`cms-${type}-table`);
+        const dataArr = productData[type];
+        let html = '<table class="table table-bordered table-sm"><thead><tr><th>Name</th><th>Type</th><th>Segment</th><th>Date</th><th>Actions</th></tr></thead><tbody>';
+        dataArr.forEach((row,i)=>{
+            html += `<tr>
+                <td>${row.name||''}</td>
+                <td>${row.type||''}</td>
+                <td>${row.segment||''}</td>
+                <td>${row.effectiveDate||''}</td>
+                <td>
+                    <button class="btn btn-sm btn-warning me-1" onclick="showCmsProductModal('${type}',${i})"><i class="fas fa-edit"></i></button>
+                    <button class="btn btn-sm btn-danger" onclick="deleteCmsProduct('${type}',${i})"><i class="fas fa-trash"></i></button>
+                </td>
+            </tr>`;
+        });
+        html += '</tbody></table>';
+        tableDiv.innerHTML = html;
+    });
+}
+function deleteCmsProduct(type, idx){
+    if(confirm("Are you sure you want to delete this product?")){
+        productData[type].splice(idx,1);
+        renderCmsTables();
+    }
+}
+function showCmsProductModal(type, idx=null) {
+    const modal = new bootstrap.Modal(document.getElementById('cmsAddEditModal'));
+    let product = idx != null ? JSON.parse(JSON.stringify(productData[type][idx])) : {
+        name:'', type:'', segment:'', effectiveDate:'',
+        fees: [], limits: [], tiers: []
     };
-
-    // Table rendering and CRUD
-    function renderCmsTables() {
-        ['individual','corporate','td'].forEach(type=>{
-            const tableDiv = document.getElementById(`cms-${type}-table`);
-            const dataArr = productData[type];
-            let html = '<table class="table table-bordered table-sm"><thead><tr><th>Name</th><th>Type</th><th>Segment</th><th>Actions</th></tr></thead><tbody>';
-            dataArr.forEach((row,i)=>{
-                html += `<tr>
-                    <td>${row.name || ''}</td>
-                    <td>${row.type || ''}</td>
-                    <td>${row.segment || ''}</td>
-                    <td>
-                        <button class="btn btn-sm btn-warning me-1" onclick="showAddEditModal('${type}',${i})"><i class="fas fa-edit"></i></button>
-                        <button class="btn btn-sm btn-danger" onclick="deleteCmsProduct('${type}',${i})"><i class="fas fa-trash"></i></button>
-                    </td>
-                </tr>`;
-            });
-            html += '</tbody></table>';
-            tableDiv.innerHTML = html;
-        });
-    }
-
-    // Add/Edit modal
-    function showAddEditModal(type, idx=null) {
-        const modal = new bootstrap.Modal(document.getElementById('cmsAddEditModal'));
-        let product = idx != null ? {...productData[type][idx]} : {name:'',type:'',segment:''};
-        let html = `
-            <input type="hidden" id="cmsEditIdx" value="${idx!=null ? idx : ''}">
-            <input type="hidden" id="cmsEditType" value="${type}">
-            <div class="mb-3">
-                <label class="form-label">Name</label><input class="form-control" id="cmsName" value="${product.name||''}" required>
+    let html = `
+        <input type="hidden" id="cmsEditIdx" value="${idx!=null ? idx : ''}">
+        <input type="hidden" id="cmsEditType" value="${type}">
+        <div class="mb-3 row">
+            <div class="col-md-6">
+                <label class="form-label">Name</label>
+                <input class="form-control" id="cmsName" value="${product.name||''}" required>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Type</label><input class="form-control" id="cmsType" value="${product.type||''}" required>
+            <div class="col-md-3">
+                <label class="form-label">Type</label>
+                <input class="form-control" id="cmsType" value="${product.type||''}" required>
             </div>
-            <div class="mb-3">
-                <label class="form-label">Segment</label><input class="form-control" id="cmsSegment" value="${product.segment||''}" required>
+            <div class="col-md-3">
+                <label class="form-label">Segment</label>
+                <input class="form-control" id="cmsSegment" value="${product.segment||''}" required>
             </div>
-            <!-- You can add more fields as needed! -->
-        `;
-        document.getElementById('cmsFormFields').innerHTML = html;
-        document.getElementById('cmsModalTitle').textContent = idx!=null ? 'Edit Product' : 'Add Product';
-        document.getElementById('cmsProductForm').onsubmit = function(e){
-            e.preventDefault();
-            const name = document.getElementById('cmsName').value;
-            const typeField = document.getElementById('cmsType').value;
-            const segment = document.getElementById('cmsSegment').value;
-            if(idx!=null){
-                productData[type][idx] = {name, type: typeField, segment};
-            }else{
-                productData[type].push({name, type: typeField, segment});
-            }
-            renderCmsTables();
-            modal.hide();
-        };
-        modal.show();
-    }
-
-    // Delete
-    function deleteCmsProduct(type, idx){
-        if(confirm("Are you sure you want to delete this product?")){
-            productData[type].splice(idx,1);
-            renderCmsTables();
+        </div>
+        <div class="mb-3 row">
+            <div class="col-md-4">
+                <label class="form-label">Effective Date</label>
+                <input class="form-control" id="cmsEffectiveDate" type="date" value="${product.effectiveDate||''}">
+            </div>
+        </div>
+        <hr>
+        <h5>Fees</h5>
+        <div class="table-responsive">
+        <table class="table table-bordered cms-table" id="cmsFeesTable">
+            <thead><tr>
+                <th>Fee Name</th><th>Amount</th><th>Currency</th><th>Frequency</th><th>Conditions</th><th><button type="button" class="btn btn-success btn-sm cms-mini-btn" onclick="addCmsRow('fees')"><i class="fas fa-plus"></i></button></th>
+            </tr></thead>
+            <tbody>
+                ${(product.fees||[]).map((fee,i)=>cmsFeeRow(fee,i)).join('')}
+            </tbody>
+        </table>
+        </div>
+        <h5>Transaction Limits</h5>
+        <div class="table-responsive">
+        <table class="table table-bordered cms-table" id="cmsLimitsTable">
+            <thead><tr>
+                <th>Channel</th><th>Limit Type</th><th>Amount</th><th>Currency</th><th>Conditions</th><th>Tax Status</th><th><button type="button" class="btn btn-success btn-sm cms-mini-btn" onclick="addCmsRow('limits')"><i class="fas fa-plus"></i></button></th>
+            </tr></thead>
+            <tbody>
+                ${(product.limits||[]).map((l,i)=>cmsLimitRow(l,i)).join('')}
+            </tbody>
+        </table>
+        </div>
+        <h5>Interest Tiers</h5>
+        <div class="table-responsive">
+        <table class="table table-bordered cms-table" id="cmsTiersTable">
+            <thead><tr>
+                <th>Tier</th><th>Operator</th><th>Value</th><th>Currency</th><th>Rate</th>
+                <th>Payout Frequency</th><th>Conditions</th><th>Deposit Condition</th>
+                <th>Withdrawal Condition</th><th>Early Closure</th><th>Minimum Balance</th>
+                <th><button type="button" class="btn btn-success btn-sm cms-mini-btn" onclick="addCmsRow('tiers')"><i class="fas fa-plus"></i></button></th>
+            </tr></thead>
+            <tbody>
+                ${(product.tiers||[]).map((t,i)=>cmsTierRow(t,i)).join('')}
+            </tbody>
+        </table>
+        </div>
+        <script>
+        window.addCmsRow = function(table){
+            let tbl = document.getElementById('cms'+capitalize(table)+'Table').getElementsByTagName('tbody')[0];
+            let row = document.createElement('tr');
+            if(table==='fees') row.innerHTML=window.cmsFeeRow({},tbl.rows.length);
+            else if(table==='limits') row.innerHTML=window.cmsLimitRow({},tbl.rows.length);
+            else row.innerHTML=window.cmsTierRow({},tbl.rows.length);
+            tbl.appendChild(row);
         }
-    }
-
-    // Bulk upload/download
-    function triggerBulkUpload(type){
-        document.getElementById('cmsBulkUploadInput').setAttribute('data-type',type);
-        document.getElementById('cmsBulkUploadInput').click();
-    }
-    function handleBulkUpload(e){
-        const file = e.target.files[0];
-        const type = e.target.getAttribute('data-type');
-        if(!file) return;
-        const reader = new FileReader();
-        reader.onload = async function(evt){
-            const workbook = new ExcelJS.Workbook();
-            await workbook.xlsx.load(evt.target.result);
-            const sheet = workbook.worksheets[0];
-            const arr = [];
-            sheet.eachRow({includeEmpty:false},(row, rowNum)=>{
-                if(rowNum===1) return; // skip header
-                arr.push({
-                    name: row.getCell(1).value || '',
-                    type: row.getCell(2).value || '',
-                    segment: row.getCell(3).value || ''
-                });
-            });
-            productData[type] = arr;
-            renderCmsTables();
-            alert("Bulk upload successful!");
+        window.delCmsRow = function(table,idx){
+            let tbl = document.getElementById('cms'+capitalize(table)+'Table').getElementsByTagName('tbody')[0];
+            tbl.deleteRow(idx);
+        }
+        function capitalize(s){ return s.charAt(0).toUpperCase()+s.slice(1);}
+        </script>
+    `;
+    document.getElementById('cmsFormFields').innerHTML = html;
+    window.cmsFeeRow = (fee,i) => `<tr>
+        <td><input class="form-control" name="fee_name" value="${fee.name||''}"></td>
+        <td><input class="form-control" name="fee_amount" value="${fee.amount||''}"></td>
+        <td><input class="form-control" name="fee_currency" value="${fee.currency||''}"></td>
+        <td><input class="form-control" name="fee_frequency" value="${fee.frequency||''}"></td>
+        <td><input class="form-control" name="fee_conditions" value="${fee.conditions||''}"></td>
+        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('fees',${i})"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+    window.cmsLimitRow = (lim,i) => `<tr>
+        <td><input class="form-control" name="limit_channel" value="${lim.channel||''}"></td>
+        <td><input class="form-control" name="limit_type" value="${lim.limitType||''}"></td>
+        <td><input class="form-control" name="limit_amount" value="${lim.amount||''}"></td>
+        <td><input class="form-control" name="limit_currency" value="${lim.currency||''}"></td>
+        <td><input class="form-control" name="limit_conditions" value="${lim.conditions||''}"></td>
+        <td><input class="form-control" name="limit_taxStatus" value="${lim.taxStatus||''}"></td>
+        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('limits',${i})"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+    window.cmsTierRow = (tier,i) => `<tr>
+        <td><input class="form-control" name="tier_tier" value="${tier.tier||''}"></td>
+        <td><input class="form-control" name="tier_operator" value="${tier.operator||''}"></td>
+        <td><input class="form-control" name="tier_value" value="${tier.value||''}"></td>
+        <td><input class="form-control" name="tier_currency" value="${tier.currency||''}"></td>
+        <td><input class="form-control" name="tier_rate" value="${tier.rate||''}"></td>
+        <td><input class="form-control" name="tier_payout" value="${tier.payout||''}"></td>
+        <td><input class="form-control" name="tier_conditions" value="${tier.conditions||''}"></td>
+        <td><input class="form-control" name="tier_depositCondition" value="${tier.depositCondition||''}"></td>
+        <td><input class="form-control" name="tier_withdrawCondition" value="${tier.withdrawCondition||''}"></td>
+        <td><input class="form-control" name="tier_earlyClosure" value="${tier.earlyClosure||''}"></td>
+        <td><input class="form-control" name="tier_minBalance" value="${tier.minBalance||''}"></td>
+        <td><button type="button" class="btn btn-danger btn-sm cms-mini-btn" onclick="delCmsRow('tiers',${i})"><i class="fas fa-trash"></i></button></td>
+    </tr>`;
+    document.getElementById('cmsProductForm').onsubmit = function(e){
+        e.preventDefault();
+        let obj = {
+            name: document.getElementById('cmsName').value,
+            type: document.getElementById('cmsType').value,
+            segment: document.getElementById('cmsSegment').value,
+            effectiveDate: document.getElementById('cmsEffectiveDate').value,
+            fees: parseCmsTable('cmsFeesTable', ['name','amount','currency','frequency','conditions'], 'fee_'),
+            limits: parseCmsTable('cmsLimitsTable', ['channel','type','amount','currency','conditions','taxStatus'], 'limit_'),
+            tiers: parseCmsTable('cmsTiersTable', ['tier','operator','value','currency','rate','payout','conditions','depositCondition','withdrawCondition','earlyClosure','minBalance'], 'tier_')
         };
-        reader.readAsArrayBuffer(file);
-        e.target.value = '';
+        let idx = document.getElementById('cmsEditIdx').value;
+        let type = document.getElementById('cmsEditType').value;
+        if(idx!=="") productData[type][parseInt(idx)] = obj;
+        else productData[type].push(obj);
+        renderCmsTables();
+        modal.hide();
+    };
+    modal.show();
+}
+function parseCmsTable(tblId, keys, prefix) {
+    let out = [];
+    let tbl = document.getElementById(tblId).getElementsByTagName('tbody')[0];
+    for(let row of tbl.rows){
+        let obj = {};
+        keys.forEach((k,ix)=>{
+            let el = row.querySelector(`[name="${prefix+k}"]`);
+            obj[k] = el ? el.value : '';
+        });
+        // Skip empty rows (all fields blank)
+        if(Object.values(obj).some(v=>v)) out.push(obj);
     }
-    // Download template (minimal for demo)
-    function downloadTemplate(type){
+    return out;
+}
+// =========== CMS BULK UPLOAD/DOWNLOAD ===========
+function triggerBulkUpload(type){
+    document.getElementById('cmsBulkUploadInput').setAttribute('data-type',type);
+    document.getElementById('cmsBulkUploadInput').click();
+}
+function handleBulkUpload(e){
+    const file = e.target.files[0];
+    const type = e.target.getAttribute('data-type');
+    if(!file) return;
+    const reader = new FileReader();
+    reader.onload = async function(evt){
         const workbook = new ExcelJS.Workbook();
-        const sheet = workbook.addWorksheet('Template');
-        sheet.addRow(['name','type','segment']);
-        for(const p of productData[type]) {
-            sheet.addRow([p.name,p.type,p.segment]);
-        }
-        workbook.xlsx.writeBuffer().then(buf=>{
-            saveAs(new Blob([buf]), `template_${type}.xlsx`);
+        await workbook.xlsx.load(evt.target.result);
+        // expect: [Product Info, Fees, Limits, Tiers] sheets
+        let arr = [];
+        let infoSheet = workbook.getWorksheet('Product Info');
+        let feesSheet = workbook.getWorksheet('Fees');
+        let limitsSheet = workbook.getWorksheet('Limits');
+        let tiersSheet = workbook.getWorksheet('Tiers');
+        if(!infoSheet) return alert('Sheet Product Info missing!');
+        let feesMap = {}, limitsMap = {}, tiersMap = {};
+        if(feesSheet) feesSheet.eachRow({includeEmpty:false},(row,rn)=>{ if(rn===1)return;
+            let pid = row.getCell(1).value||''; if(!feesMap[pid])feesMap[pid]=[]; feesMap[pid].push({
+                name:row.getCell(2).value||'',amount:row.getCell(3).value||'',currency:row.getCell(4).value||'',frequency:row.getCell(5).value||'',conditions:row.getCell(6).value||''
+            });
+        });
+        if(limitsSheet) limitsSheet.eachRow({includeEmpty:false},(row,rn)=>{ if(rn===1)return;
+            let pid = row.getCell(1).value||''; if(!limitsMap[pid])limitsMap[pid]=[]; limitsMap[pid].push({
+                channel:row.getCell(2).value||'',limitType:row.getCell(3).value||'',amount:row.getCell(4).value||'',currency:row.getCell(5).value||'',conditions:row.getCell(6).value||'',taxStatus:row.getCell(7).value||''
+            });
+        });
+        if(tiersSheet) tiersSheet.eachRow({includeEmpty:false},(row,rn)=>{ if(rn===1)return;
+            let pid = row.getCell(1).value||''; if(!tiersMap[pid])tiersMap[pid]=[]; tiersMap[pid].push({
+                tier:row.getCell(2).value||'',operator:row.getCell(3).value||'',value:row.getCell(4).value||'',currency:row.getCell(5).value||'',rate:row.getCell(6).value||'',
+                payout:row.getCell(7).value||'',conditions:row.getCell(8).value||'',depositCondition:row.getCell(9).value||'',withdrawCondition:row.getCell(10).value||'',
+                earlyClosure:row.getCell(11).value||'',minBalance:row.getCell(12).value||''
+            });
+        });
+        infoSheet.eachRow({includeEmpty:false},(row,rn)=>{
+            if(rn===1)return;
+            let pid = row.getCell(1).value||'';
+            arr.push({
+                name:pid, type:row.getCell(2).value||'', segment:row.getCell(3).value||'', effectiveDate:row.getCell(4).value||'',
+                fees: feesMap[pid]||[], limits: limitsMap[pid]||[], tiers: tiersMap[pid]||[]
+            });
+        });
+        productData[type] = arr;
+        renderCmsTables();
+        alert("Bulk upload successful!");
+    };
+    reader.readAsArrayBuffer(file);
+    e.target.value = '';
+}
+function downloadTemplate(type){
+    const workbook = new ExcelJS.Workbook();
+    // Info
+    let infoSheet = workbook.addWorksheet('Product Info');
+    infoSheet.addRow(['Product Name','Product Type','Segment','Effective Date']);
+    for(const p of productData[type]) {
+        infoSheet.addRow([p.name||'',p.type||'',p.segment||'',p.effectiveDate||'']);
+    }
+    // Fees
+    let feesSheet = workbook.addWorksheet('Fees');
+    feesSheet.addRow(['Product Name','Fee Name','Amount','Currency','Frequency','Conditions']);
+    for(const p of productData[type]) {
+        (p.fees||[]).forEach(fee=>{
+            feesSheet.addRow([p.name||'',fee.name||'',fee.amount||'',fee.currency||'',fee.frequency||'',fee.conditions||'']);
         });
     }
-    </script>
+    // Limits
+    let limitsSheet = workbook.addWorksheet('Limits');
+    limitsSheet.addRow(['Product Name','Channel','Limit Type','Amount','Currency','Conditions','Tax Status']);
+    for(const p of productData[type]) {
+        (p.limits||[]).forEach(lim=>{
+            limitsSheet.addRow([p.name||'',lim.channel||'',lim.limitType||'',lim.amount||'',lim.currency||'',lim.conditions||'',lim.taxStatus||'']);
+        });
+    }
+    // Tiers
+    let tiersSheet = workbook.addWorksheet('Tiers');
+    tiersSheet.addRow(['Product Name','Tier','Operator','Value','Currency','Rate','Payout Frequency','Conditions','Deposit Condition','Withdrawal Condition','Early Closure','Minimum Balance']);
+    for(const p of productData[type]) {
+        (p.tiers||[]).forEach(tier=>{
+            tiersSheet.addRow([p.name||'',tier.tier||'',tier.operator||'',tier.value||'',tier.currency||'',tier.rate||'',tier.payout||'',tier.conditions||'',tier.depositCondition||'',tier.withdrawCondition||'',tier.earlyClosure||'',tier.minBalance||'']);
+        });
+    }
+    workbook.xlsx.writeBuffer().then(buf=>{
+        saveAs(new Blob([buf]), `template_${type}.xlsx`);
+    });
+}
+</script>
 </body>
 </html>
